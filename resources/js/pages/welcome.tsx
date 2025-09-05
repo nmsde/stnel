@@ -355,13 +355,56 @@ export default function Welcome() {
 
                             {/* Transformation Arrow */}
                             <div className={`flex justify-center mb-16 transition-all duration-1000 delay-1000 ${visibleSections['how-it-works'] ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
-                                <div className="border-4 border-[#FFCD45]/20 rounded-3xl p-8">
-                                    <div className="text-center">
-                                        <img className="h-8 w-auto mx-auto mb-2" src="/stnel-logo.svg" alt="Stnel" />
-                                        <div className="text-[#343434] font-semibold text-sm">Activated</div>
+                                <div className="relative">
+                                    {/* Animated Shield Rings */}
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="w-32 h-32 border-2 border-[#FFCD45]/30 rounded-full animate-ping"></div>
                                     </div>
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="w-24 h-24 border-2 border-[#FFCD45]/50 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                                    </div>
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="w-40 h-40 border border-[#FFCD45]/20 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                                    </div>
+                                    
+                                    {/* Central Protection Core */}
+                                    <div className="relative rounded-3xl p-8 px-16 shadow-2xl border-4 border-[#FFCD45]/30">
+                                        {/* Shield Icon Background */}
+                                        <div className="absolute inset-0 flex items-center justify-center opacity-10">
+                                            <Shield className="w-20 h-20 text-[#343434]" />
+                                        </div>
+                                        
+                                        <div className="relative text-center">
+                                            <img className="h-8 w-auto mx-auto mb-2 drop-shadow-sm" src="/stnel-logo.svg" alt="Stnel" />
+                                            <div className="text-[#343434] font-bold text-sm">ACTIVATED</div>
+                                        </div>
+                                        
+                                        {/* Scanning Line Effect */}
+                                        <div className="absolute inset-0 overflow-hidden rounded-3xl">
+                                            <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse transform -translate-y-4" style={{ 
+                                                animation: 'scan 2s ease-in-out infinite',
+                                                animationDelay: '1.5s'
+                                            }}></div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Protective Barrier Indicators */}
+                                    <div className="absolute -top-2 -left-2 w-4 h-4 bg-[#FFCD45] rounded-full animate-pulse"></div>
+                                    <div className="absolute -top-2 -right-2 w-4 h-4 bg-[#FFCD45] rounded-full animate-pulse" style={{ animationDelay: '0.3s' }}></div>
+                                    <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-[#FFCD45] rounded-full animate-pulse" style={{ animationDelay: '0.6s' }}></div>
+                                    <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-[#FFCD45] rounded-full animate-pulse" style={{ animationDelay: '0.9s' }}></div>
                                 </div>
                             </div>
+                            
+                            {/* Add custom CSS for scanning effect */}
+                            <style jsx>{`
+                                @keyframes scan {
+                                    0% { top: -10%; opacity: 0; }
+                                    10% { opacity: 1; }
+                                    90% { opacity: 1; }
+                                    100% { top: 110%; opacity: 0; }
+                                }
+                            `}</style>
 
                             {/* Step 2: Protected Access Flow */}
                             <div className={`transition-all duration-1000 delay-1500 ${visibleSections['how-it-works'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
