@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\Organisation;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -45,6 +46,13 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'organisations' => $request->user() ? Organisation::where('user_id', $request->user()->id)
+                ->orWhereHas('users', function ($query) use ($request) {
+                    $query->where('user_id', $request->user()->id);
+                })
+                ->select(['id', 'name', 'description'])
+                ->orderBy('name')
+                ->get() : [],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

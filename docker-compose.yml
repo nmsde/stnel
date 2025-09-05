@@ -1,0 +1,50 @@
+services:
+  database:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: stnel
+      POSTGRES_USER: stnel
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - stnel
+
+  maillinter:
+    image: nunomsde/maillinter:latest
+    ports:
+      - "2525:2525"
+      - "8547:8547"
+    volumes:
+      - maillinter_data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8547/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - stnel
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - stnel
+
+volumes:
+  postgres_data:
+  redis_data:
+  maillinter_data:
+
+networks:
+  stnel:
+    driver: bridge
