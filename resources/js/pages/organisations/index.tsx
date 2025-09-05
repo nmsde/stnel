@@ -114,13 +114,8 @@ export default function OrganisationsIndex() {
                                             </div>
                                         </div>
 
-                                        <div className="flex gap-2 pt-3 border-t">
-                                            <Link href={`/organisations/${organisation.id}`} className="flex-1">
-                                                <Button variant="outline" size="sm" className="w-full">
-                                                    View Details
-                                                </Button>
-                                            </Link>
-                                            <Link href={`/organisations/${organisation.id}`} className="flex-1">
+                                        <div className="pt-3 border-t">
+                                            <Link href={`/organisations/${organisation.id}`} className="block">
                                                 <Button variant="default" size="sm" className="w-full">
                                                     Manage Apps
                                                 </Button>

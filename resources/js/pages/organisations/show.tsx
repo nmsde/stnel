@@ -147,7 +147,7 @@ export default function OrganisationShow() {
                 <div className="flex items-start justify-between">
                     <div className="space-y-3">
                         <div className="flex items-center gap-4">
-                            <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
+                            <div className="p-3 rounded-lg bg-white border border-primary/20">
                                 <Shield className="h-8 w-8 text-primary" />
                             </div>
                             <div>
@@ -192,7 +192,7 @@ export default function OrganisationShow() {
                 {/* Real-time Stats Cards */}
                 <div className="grid gap-6 md:grid-cols-3">
                     {/* Protection Status */}
-                    <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+                    <Card className="bg-white border-primary/20">
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -205,45 +205,45 @@ export default function OrganisationShow() {
                                         {policies.data.length} total apps • {policies.data.filter(p => p.require_mfa).length} with MFA
                                     </p>
                                 </div>
-                                <Shield className="h-12 w-12 text-primary" />
+                                <Shield className="h-12 w-12 text-primary/60" />
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Today's Activity */}
-                    <Card className="bg-gradient-to-br from-green-500/5 to-green-500/10 border-green-500/20">
+                    <Card className="bg-white border-primary/20">
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-muted-foreground">Today's Access</p>
                                     <div className="flex items-baseline gap-2">
-                                        <p className="text-3xl font-bold text-green-600 dark:text-green-400">{logStats.allowed}</p>
+                                        <p className="text-3xl font-bold text-primary">{logStats.allowed}</p>
                                         <span className="text-lg text-muted-foreground">allowed</span>
                                     </div>
                                     <p className="text-xs text-muted-foreground mt-1">
                                         {logStats.blocked} blocked • {logStats.unique_users} unique users
                                     </p>
                                 </div>
-                                <CheckCircle className="h-12 w-12 text-green-500" />
+                                <CheckCircle className="h-12 w-12 text-primary/60" />
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Security Health */}
-                    <Card className="bg-gradient-to-br from-blue-500/5 to-blue-500/10 border-blue-500/20">
+                    <Card className="bg-white border-primary/20">
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-muted-foreground">Security Health</p>
                                     <div className="flex items-center gap-2 mt-1">
-                                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                        <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
                                         <p className="text-xl font-bold text-foreground">All Good</p>
                                     </div>
                                     <p className="text-xs text-muted-foreground mt-1">
                                         No security issues detected
                                     </p>
                                 </div>
-                                <Lock className="h-12 w-12 text-blue-500" />
+                                <Lock className="h-12 w-12 text-primary/60" />
                             </div>
                         </CardContent>
                     </Card>

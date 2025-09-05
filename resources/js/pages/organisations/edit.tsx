@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import InputError from '@/components/input-error';
 import AppLayout from '@/layouts/app-layout';
+import { TokenStatusCard } from '@/components/token-status-card';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { type OrganisationEditProps } from '@/types/cloudflare';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
@@ -158,80 +159,8 @@ export default function OrganisationEdit() {
 
                     <Separator />
 
-                    {/* API Token Management */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Cloudflare API Token</CardTitle>
-                            <CardDescription>
-                                Manage your Cloudflare API token for zone and policy management.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            {/* Current Token Status */}
-                            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                <div className="flex items-center space-x-3">
-                                    {organisation.token_last_validated_at ? (
-                                        <>
-                                            <CheckCircle className="h-5 w-5 text-green-500" />
-                                            <div>
-                                                <p className="text-sm font-medium text-gray-900">API Token Active</p>
-                                                <p className="text-xs text-gray-600">
-                                                    Last validated: {new Date(organisation.token_last_validated_at).toLocaleString()}
-                                                </p>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <AlertCircle className="h-5 w-5 text-amber-500" />
-                                            <div>
-                                                <p className="text-sm font-medium text-gray-900">No API Token</p>
-                                                <p className="text-xs text-gray-600">Configure a token to sync zones and manage policies</p>
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Token Input */}
-                            <div className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="api_token">
-                                        {organisation.token_last_validated_at ? 'Update API Token' : 'Add API Token'}
-                                    </Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="api_token"
-                                            type={showToken ? 'text' : 'password'}
-                                            value={data.api_token}
-                                            onChange={(e) => setData('api_token', e.target.value)}
-                                            placeholder="Enter your Cloudflare API token"
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            className="absolute right-2 top-1/2 -translate-y-1/2"
-                                            onClick={() => setShowToken(!showToken)}
-                                        >
-                                            {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                        </Button>
-                                    </div>
-                                    <InputError message={errors.api_token} />
-                                </div>
-
-                                {data.api_token && (
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={handleValidateToken}
-                                        disabled={validatingToken}
-                                    >
-                                        {validatingToken ? 'Validating...' : 'Test Token'}
-                                    </Button>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
+                    {/* API Token Status & Management */}
+                    <TokenStatusCard organisation={organisation} />
 
                     {/* Actions */}
                     <div className="flex gap-3 pt-6 border-t">
@@ -245,29 +174,6 @@ export default function OrganisationEdit() {
                         </Link>
                     </div>
                 </form>
-
-                {/* Help Section */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm">API Token Setup Guide</CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-sm text-gray-600 space-y-2">
-                        <p>To create a Cloudflare API token with the required permissions:</p>
-                        <ol className="list-decimal list-inside space-y-1 ml-2">
-                            <li>Visit <a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Cloudflare API Tokens</a></li>
-                            <li>Click "Create Token" and select "Custom token"</li>
-                            <li>Add these permissions:
-                                <ul className="list-disc list-inside ml-4 mt-1">
-                                    <li>Zone:Zone:Read</li>
-                                    <li>Zone:DNS:Edit</li>
-                                    <li>Account:Cloudflare Access:Edit</li>
-                                </ul>
-                            </li>
-                            <li>Select your account and zones</li>
-                            <li>Create and copy the token</li>
-                        </ol>
-                    </CardContent>
-                </Card>
 
                 {/* Danger Zone */}
                 <Card className="border-red-200">

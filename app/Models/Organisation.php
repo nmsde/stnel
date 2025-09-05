@@ -21,12 +21,21 @@ class Organisation extends Model
         'api_token',
         'encrypted_api_token',
         'token_last_validated_at',
+        'token_expires_at',
+        'token_last_checked',
+        'token_permissions',
+        'token_renewal_notified',
+        'token_renewal_notified_at',
         'settings',
     ];
 
     protected $casts = [
         'settings' => 'array',
+        'token_permissions' => 'array',
         'token_last_validated_at' => 'datetime',
+        'token_expires_at' => 'datetime',
+        'token_last_checked' => 'datetime',
+        'token_renewal_notified_at' => 'datetime',
     ];
 
     protected $hidden = [
@@ -138,5 +147,147 @@ class Organisation extends Model
     public function updateUserRole(User $user, string $role): void
     {
         $this->users()->updateExistingPivot($user->id, ['role' => $role]);
+    }
+
+    /**
+     * Token Management Methods
+     */
+    
+    public function hasValidToken(): bool
+    {
+        return $this->api_token && 
+               ($this->token_expires_at === null || $this->token_expires_at->isFuture());
+    }
+
+    public function isTokenExpiring(?int $daysThreshold = 7): bool
+    {
+        return $this->token_expires_at && 
+               $this->token_expires_at->isBefore(now()->addDays($daysThreshold));
+    }
+
+    public function isTokenExpired(): bool
+    {
+        return $this->token_expires_at && $this->token_expires_at->isPast();
+    }
+
+    public function getTokenExpiresInDays(): ?int
+    {
+        if (!$this->token_expires_at) {
+            return null;
+        }
+        
+        return max(0, now()->diffInDays($this->token_expires_at, false));
+    }
+
+    public function getTokenStatus(): string
+    {
+        if (!$this->api_token) {
+            return 'missing';
+        }
+        
+        if ($this->isTokenExpired()) {
+            return 'expired';
+        }
+        
+        if ($this->isTokenExpiring(7)) {
+            return 'expiring';
+        }
+        
+        if ($this->isTokenExpiring(30)) {
+            return 'warning';
+        }
+        
+        return 'valid';
+    }
+
+    public function getTokenStatusBadge(): array
+    {
+        $status = $this->getTokenStatus();
+        
+        return match($status) {
+            'missing' => [
+                'text' => 'No Token',
+                'variant' => 'destructive',
+                'description' => 'API token required for Cloudflare integration'
+            ],
+            'expired' => [
+                'text' => 'Expired',
+                'variant' => 'destructive', 
+                'description' => 'Token expired on ' . $this->token_expires_at?->format('M j, Y')
+            ],
+            'expiring' => [
+                'text' => 'Expires Soon',
+                'variant' => 'destructive',
+                'description' => 'Token expires in ' . $this->getTokenExpiresInDays() . ' days'
+            ],
+            'warning' => [
+                'text' => 'Expires Soon',
+                'variant' => 'outline',
+                'description' => 'Token expires in ' . $this->getTokenExpiresInDays() . ' days'
+            ],
+            default => [
+                'text' => 'Active',
+                'variant' => 'secondary',
+                'description' => $this->token_expires_at ? 
+                    'Expires ' . $this->token_expires_at->format('M j, Y') : 
+                    'Token is active'
+            ]
+        };
+    }
+
+    public function markTokenRenewalNotified(): void
+    {
+        $this->update([
+            'token_renewal_notified' => true,
+            'token_renewal_notified_at' => now(),
+        ]);
+    }
+
+    public function resetTokenRenewalNotification(): void
+    {
+        $this->update([
+            'token_renewal_notified' => false,
+            'token_renewal_notified_at' => null,
+        ]);
+    }
+
+    public function updateTokenInfo(array $tokenInfo, array $permissions): void
+    {
+        $this->update([
+            'token_last_checked' => now(),
+            'token_permissions' => $permissions,
+            'token_expires_at' => isset($tokenInfo['expires_on']) ? 
+                \Carbon\Carbon::parse($tokenInfo['expires_on']) : null,
+        ]);
+    }
+
+    /**
+     * Scopes for token management
+     */
+    public function scopeWithExpiredTokens($query)
+    {
+        return $query->whereNotNull('token_expires_at')
+                    ->where('token_expires_at', '<', now());
+    }
+
+    public function scopeWithExpiringTokens($query, int $daysThreshold = 7)
+    {
+        return $query->whereNotNull('token_expires_at')
+                    ->where('token_expires_at', '<', now()->addDays($daysThreshold))
+                    ->where('token_expires_at', '>', now());
+    }
+
+    public function scopeWithoutTokens($query)
+    {
+        return $query->where(function ($q) {
+            $q->whereNull('encrypted_api_token')
+              ->orWhere('encrypted_api_token', '');
+        });
+    }
+
+    public function scopeNeedingRenewalNotification($query, int $daysThreshold = 7)
+    {
+        return $query->withExpiringTokens($daysThreshold)
+                    ->where('token_renewal_notified', false);
     }
 }

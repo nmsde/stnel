@@ -11,6 +11,22 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+Route::get('/about', function () {
+    return Inertia::render('about');
+})->name('about');
+
+Route::get('/why-cloudflare', function () {
+    return Inertia::render('why-cloudflare');
+})->name('why-cloudflare');
+
+Route::get('/privacy-policy', function () {
+    return Inertia::render('privacy-policy');
+})->name('privacy-policy');
+
+Route::get('/terms-of-service', function () {
+    return Inertia::render('terms-of-service');
+})->name('terms-of-service');
+
 Route::middleware([
     'auth',
     ValidateSessionWithWorkOS::class,
@@ -23,6 +39,8 @@ Route::middleware([
     Route::resource('organisations', OrganisationController::class);
     Route::post('organisations/{organisation}/validate-token', [OrganisationController::class, 'validateToken'])
         ->name('organisations.validate-token');
+    Route::post('organisations/{organisation}/check-token-health', [OrganisationController::class, 'checkTokenHealth'])
+        ->name('organisations.check-token-health');
     Route::post('organisations/{organisation}/sync-zones', [OrganisationController::class, 'syncZones'])
         ->name('organisations.sync-zones');
     Route::get('organisations/{organisation}/audit-logs', [OrganisationController::class, 'auditLogs'])

@@ -6,6 +6,7 @@ use App\Models\Organisation;
 use App\Services\CloudflareService;
 use App\Services\AuditService;
 use App\Services\CloudflareAccessLogsService;
+use App\Services\CloudflareTokenValidationService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -82,13 +83,15 @@ class OrganisationController extends Controller
             $organisation->addUser($request->user(), 'admin');
 
             if ($apiToken) {
-                $cloudflare = new CloudflareService($organisation);
-                $validation = $cloudflare->validateToken();
+                $validationService = new CloudflareTokenValidationService();
+                $validation = $validationService->checkAndUpdateTokenHealth($organisation);
                 
                 if (!$validation['valid']) {
                     throw new Exception('Invalid API token: ' . $validation['error']);
                 }
 
+                // Sync zones using the CloudflareService
+                $cloudflare = new CloudflareService($organisation);
                 $cloudflare->syncZones();
             }
 
@@ -202,13 +205,15 @@ class OrganisationController extends Controller
                 $organisation->save();
 
                 if ($request->filled('api_token')) {
-                    $cloudflare = new CloudflareService($organisation);
-                    $validation = $cloudflare->validateToken();
+                    $validationService = new CloudflareTokenValidationService();
+                    $validation = $validationService->checkAndUpdateTokenHealth($organisation);
                     
                     if (!$validation['valid']) {
                         throw new Exception('Invalid API token: ' . $validation['error']);
                     }
 
+                    // Sync zones using the CloudflareService
+                    $cloudflare = new CloudflareService($organisation);
                     $cloudflare->syncZones();
                 }
             }
@@ -314,6 +319,55 @@ class OrganisationController extends Controller
             return back()->with('status', 'Zones synced successfully.');
         } catch (Exception $e) {
             return back()->withErrors(['error' => 'Failed to sync zones: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Check token health and update organization
+     */
+    public function checkTokenHealth(Request $request, Organisation $organisation)
+    {
+        $this->authorize('update', $organisation);
+
+        try {
+            $validationService = new CloudflareTokenValidationService();
+            $result = $validationService->checkAndUpdateTokenHealth($organisation);
+            
+            if ($result['valid']) {
+                $this->auditService->logCustom(
+                    $organisation,
+                    $request->user(),
+                    'token_health_checked',
+                    'Organisation',
+                    $organisation->id,
+                    ['status' => 'valid']
+                );
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Token health checked successfully',
+                    'token_info' => $result
+                ]);
+            } else {
+                $this->auditService->logCustom(
+                    $organisation,
+                    $request->user(),
+                    'token_health_check_failed',
+                    'Organisation',
+                    $organisation->id,
+                    ['error' => $result['error']]
+                );
+
+                return response()->json([
+                    'success' => false,
+                    'error' => $result['error']
+                ], 422);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to check token health: ' . $e->getMessage()
+            ], 500);
         }
     }
 
