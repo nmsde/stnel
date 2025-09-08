@@ -1,14 +1,27 @@
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarGroup, SidebarGroupLabel, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from '@/components/ui/sidebar';
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarGroup,
+    SidebarGroupLabel,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
+} from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Building2, Shield, Settings, Activity, ChevronRight } from 'lucide-react';
-import AppLogo from './app-logo';
+import { Activity, Bell, Building2, ChevronRight, LayoutGrid, Settings, Shield } from 'lucide-react';
 import React, { useState } from 'react';
+import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
@@ -29,21 +42,21 @@ export function AppSidebar() {
     const page = usePage();
     const currentUrl = page.url;
     const organisations = (page.props as any).organisations || [];
-    
+
     // State for tracking which organization is expanded
     const [expandedOrgId, setExpandedOrgId] = useState<number | null>(null);
-    
+
     // Check if we're viewing a specific organization and auto-expand it
     const orgMatch = currentUrl.match(/\/organisations\/(\d+)/);
     const currentOrgId = orgMatch ? parseInt(orgMatch[1]) : null;
-    
+
     // Auto-expand current organization on mount/navigation change
     React.useEffect(() => {
         if (currentOrgId && expandedOrgId !== currentOrgId) {
             setExpandedOrgId(currentOrgId);
         }
     }, [currentOrgId]);
-    
+
     // Organization-specific navigation
     const getOrgNavItems = (orgId: number): NavItem[] => [
         {
@@ -55,6 +68,11 @@ export function AppSidebar() {
             title: 'Access Logs',
             href: `/organisations/${orgId}/access-logs`,
             icon: Activity,
+        },
+        {
+            title: 'Notifications',
+            href: `/organisations/${orgId}/notification-settings`,
+            icon: Bell,
         },
         {
             title: 'Settings',
@@ -83,29 +101,21 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} />
-                
+
                 {/* Organizations Section */}
                 {organisations.length > 0 && (
-                    <SidebarGroup className="px-2 py-0 mt-4">
+                    <SidebarGroup className="mt-4 px-2 py-0">
                         <SidebarGroupLabel>Organizations</SidebarGroupLabel>
                         <SidebarMenu>
                             {organisations.map((org: any) => (
                                 <SidebarMenuItem key={org.id}>
-                                    <Collapsible 
-                                        open={expandedOrgId === org.id}
-                                        onOpenChange={() => handleOrgToggle(org.id)}
-                                    >
+                                    <Collapsible open={expandedOrgId === org.id} onOpenChange={() => handleOrgToggle(org.id)}>
                                         <CollapsibleTrigger asChild>
-                                            <SidebarMenuButton
-                                                className="w-full"
-                                                tooltip={{ children: org.name }}
-                                            >
+                                            <SidebarMenuButton className="w-full" tooltip={{ children: org.name }}>
                                                 <Building2 className="h-4 w-4" />
-                                                <span className="flex-1 text-left truncate">{org.name}</span>
-                                                <ChevronRight 
-                                                    className={`h-4 w-4 transition-transform ${
-                                                        expandedOrgId === org.id ? 'rotate-90' : ''
-                                                    }`} 
+                                                <span className="flex-1 truncate text-left">{org.name}</span>
+                                                <ChevronRight
+                                                    className={`h-4 w-4 transition-transform ${expandedOrgId === org.id ? 'rotate-90' : ''}`}
                                                 />
                                             </SidebarMenuButton>
                                         </CollapsibleTrigger>

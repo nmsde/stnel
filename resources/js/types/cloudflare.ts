@@ -16,13 +16,13 @@ export interface Organisation {
     settings?: Record<string, any>;
     created_at: string;
     updated_at: string;
-    
+
     // Relationships
     owner?: User;
     users?: User[];
     zones?: CloudflareZone[];
     policies?: AccessPolicy[];
-    
+
     // Counts
     zones_count?: number;
     policies_count?: number;
@@ -38,7 +38,7 @@ export interface CloudflareZone {
     synced_at?: string;
     created_at: string;
     updated_at: string;
-    
+
     // Relationships
     organisation?: Organisation;
     policies?: AccessPolicy[];
@@ -66,13 +66,13 @@ export interface AccessPolicy {
     updated_by?: number;
     created_at: string;
     updated_at: string;
-    
+
     // Relationships
     organisation?: Organisation;
     zone?: CloudflareZone;
     creator?: User;
     updater?: User;
-    
+
     // Computed attributes
     full_url?: string;
 }
@@ -88,11 +88,11 @@ export interface AuditLog {
     ip_address?: string;
     user_agent?: string;
     created_at: string;
-    
+
     // Relationships
     organisation?: Organisation;
     user?: User;
-    
+
     // Computed
     description?: string;
     formatted_changes?: Array<{

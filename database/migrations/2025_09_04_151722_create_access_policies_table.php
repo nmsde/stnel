@@ -27,7 +27,7 @@ return new class extends Migration
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index('cf_application_id');
             $table->index(['organisation_id', 'status']);
         });

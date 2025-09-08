@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Cashier\Billable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use Billable, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -72,7 +73,7 @@ class User extends Authenticatable
     {
         $owned = $this->ownedOrganisations;
         $member = $this->organisations;
-        
+
         return $owned->merge($member)->unique('id');
     }
 
@@ -81,7 +82,95 @@ class User extends Authenticatable
      */
     public function canAccessOrganisation(Organisation $organisation): bool
     {
-        return $organisation->user_id === $this->id || 
+        return $organisation->user_id === $this->id ||
                $organisation->hasUser($this);
+    }
+
+    /**
+     * Subscription and billing methods
+     */
+    public function getCurrentPlan(): ?BillingPlan
+    {
+        if ($this->subscribed('default')) {
+            $subscription = $this->subscription('default');
+
+            return BillingPlan::where('stripe_price_id', $subscription->stripe_price)->first();
+        }
+
+        // Return free plan for non-subscribers
+        return BillingPlan::where('name', 'Free')->first();
+    }
+
+    public function getMaxOrganizations(): int
+    {
+        $plan = $this->getCurrentPlan();
+
+        return $plan ? $plan->max_organizations : 1;
+    }
+
+    public function getMaxProtectedEndpoints(): int
+    {
+        $plan = $this->getCurrentPlan();
+
+        return $plan ? $plan->max_protected_endpoints : 5;
+    }
+
+    public function canCreateOrganization(): bool
+    {
+        $maxOrganizations = $this->getMaxOrganizations();
+
+        if ($maxOrganizations === -1) {
+            return true; // Unlimited
+        }
+
+        return $this->ownedOrganisations()->count() < $maxOrganizations;
+    }
+
+    public function canCreateProtectedEndpoint(): bool
+    {
+        $maxEndpoints = $this->getMaxProtectedEndpoints();
+
+        if ($maxEndpoints === -1) {
+            return true; // Unlimited
+        }
+
+        $totalEndpoints = $this->ownedOrganisations()
+            ->withCount('policies')
+            ->get()
+            ->sum('policies_count');
+
+        return $totalEndpoints < $maxEndpoints;
+    }
+
+    public function isSubscribed(): bool
+    {
+        return $this->subscribed('default');
+    }
+
+    public function isOnFreePlan(): bool
+    {
+        return ! $this->isSubscribed();
+    }
+
+    public function isOnProPlan(): bool
+    {
+        $plan = $this->getCurrentPlan();
+
+        return $plan && $plan->name === 'Pro';
+    }
+
+    public function hasReachedOrganizationLimit(): bool
+    {
+        return ! $this->canCreateOrganization();
+    }
+
+    public function hasReachedEndpointLimit(): bool
+    {
+        return ! $this->canCreateProtectedEndpoint();
+    }
+
+    public function needsUpgrade(): bool
+    {
+        return $this->hasReachedOrganizationLimit() || $this->hasReachedEndpointLimit();
     }
 }

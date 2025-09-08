@@ -1,16 +1,16 @@
+import InputError from '@/components/input-error';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
-import InputError from '@/components/input-error';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { type PolicyCreateProps, type PolicyRule } from '@/types/cloudflare';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { ArrowLeft, Plus, X, Mail, Globe, Shield, Clock } from 'lucide-react';
+import { ArrowLeft, Clock, Globe, Mail, Plus, Shield, X } from 'lucide-react';
 import { useState } from 'react';
 
 const sessionDurations = [
@@ -66,43 +66,46 @@ export default function PolicyCreate() {
 
     const addEmailRule = () => {
         if (!emailInput.trim()) return;
-        
+
         const newRule: PolicyRule = {
             type: 'email',
             value: emailInput.trim(),
         };
-        
+
         setData('rules', [...data.rules, newRule]);
         setEmailInput('');
     };
 
     const addDomainRule = () => {
         if (!domainInput.trim()) return;
-        
+
         const newRule: PolicyRule = {
             type: 'domain',
             value: domainInput.trim(),
         };
-        
+
         setData('rules', [...data.rules, newRule]);
         setDomainInput('');
     };
 
     const removeRule = (index: number) => {
-        setData('rules', data.rules.filter((_, i) => i !== index));
+        setData(
+            'rules',
+            data.rules.filter((_, i) => i !== index),
+        );
     };
 
-    const selectedZone = zones.find(zone => zone.id.toString() === data.cloudflare_zone_id);
+    const selectedZone = zones.find((zone) => zone.id.toString() === data.cloudflare_zone_id);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Protect New App" />
 
-            <div className="max-w-4xl mx-auto space-y-6">
+            <div className="mx-auto max-w-4xl space-y-6">
                 <div className="flex items-center gap-4">
                     <Link href={`/organisations/${organisation.id}`}>
                         <Button variant="ghost" size="sm">
-                            <ArrowLeft className="h-4 w-4 mr-2" />
+                            <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to protected apps
                         </Button>
                     </Link>
@@ -113,9 +116,7 @@ export default function PolicyCreate() {
                     <Card>
                         <CardHeader>
                             <CardTitle>App Information</CardTitle>
-                            <CardDescription>
-                                Tell us about the app you want to protect.
-                            </CardDescription>
+                            <CardDescription>Tell us about the app you want to protect.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="grid gap-6 md:grid-cols-2">
@@ -133,10 +134,7 @@ export default function PolicyCreate() {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="cloudflare_zone_id">Domain *</Label>
-                                    <Select 
-                                        value={data.cloudflare_zone_id} 
-                                        onValueChange={(value) => setData('cloudflare_zone_id', value)}
-                                    >
+                                    <Select value={data.cloudflare_zone_id} onValueChange={(value) => setData('cloudflare_zone_id', value)}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select your domain" />
                                         </SelectTrigger>
@@ -168,23 +166,14 @@ export default function PolicyCreate() {
                                         placeholder={selectedZone ? `admin.${selectedZone.name}` : 'admin.yourapp.com'}
                                         required
                                     />
-                                    <p className="text-xs text-muted-foreground">
-                                        The URL where your app is hosted
-                                    </p>
+                                    <p className="text-xs text-muted-foreground">The URL where your app is hosted</p>
                                     <InputError message={errors.domain} />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="path">Path</Label>
-                                    <Input
-                                        id="path"
-                                        value={data.path}
-                                        onChange={(e) => setData('path', e.target.value)}
-                                        placeholder="/"
-                                    />
-                                    <p className="text-xs text-muted-foreground">
-                                        Specific path to protect (e.g., /admin, /dashboard)
-                                    </p>
+                                    <Input id="path" value={data.path} onChange={(e) => setData('path', e.target.value)} placeholder="/" />
+                                    <p className="text-xs text-muted-foreground">Specific path to protect (e.g., /admin, /dashboard)</p>
                                     <InputError message={errors.path} />
                                 </div>
                             </div>
@@ -195,9 +184,7 @@ export default function PolicyCreate() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Who Can Access</CardTitle>
-                            <CardDescription>
-                                Specify which users should have access to this app.
-                            </CardDescription>
+                            <CardDescription>Specify which users should have access to this app.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             {/* Email Rules */}
@@ -207,11 +194,9 @@ export default function PolicyCreate() {
                                         <Mail className="h-4 w-4" />
                                         Email Addresses
                                     </Label>
-                                    <p className="text-sm text-muted-foreground mt-1">
-                                        Grant access to specific people by their email address.
-                                    </p>
+                                    <p className="mt-1 text-sm text-muted-foreground">Grant access to specific people by their email address.</p>
                                 </div>
-                                
+
                                 <div className="flex gap-2">
                                     <Input
                                         value={emailInput}
@@ -232,11 +217,9 @@ export default function PolicyCreate() {
                                         <Globe className="h-4 w-4" />
                                         Email Domains
                                     </Label>
-                                    <p className="text-sm text-muted-foreground mt-1">
-                                        Grant access to everyone from your company domain.
-                                    </p>
+                                    <p className="mt-1 text-sm text-muted-foreground">Grant access to everyone from your company domain.</p>
                                 </div>
-                                
+
                                 <div className="flex gap-2">
                                     <Input
                                         value={domainInput}
@@ -256,7 +239,7 @@ export default function PolicyCreate() {
                                     <Label>Authorized Users ({data.rules.length})</Label>
                                     <div className="space-y-2">
                                         {data.rules.map((rule, index) => (
-                                            <div key={index} className="flex items-center justify-between bg-muted/50 p-3 rounded-lg">
+                                            <div key={index} className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
                                                 <div className="flex items-center gap-2">
                                                     {rule.type === 'email' ? (
                                                         <Mail className="h-4 w-4 text-blue-500" />
@@ -268,12 +251,7 @@ export default function PolicyCreate() {
                                                         {rule.type}
                                                     </Badge>
                                                 </div>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => removeRule(index)}
-                                                >
+                                                <Button type="button" variant="ghost" size="sm" onClick={() => removeRule(index)}>
                                                     <X className="h-4 w-4" />
                                                 </Button>
                                             </div>
@@ -290,9 +268,7 @@ export default function PolicyCreate() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Security Options</CardTitle>
-                            <CardDescription>
-                                Choose how secure you want this protection to be.
-                            </CardDescription>
+                            <CardDescription>Choose how secure you want this protection to be.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="grid gap-6 md:grid-cols-2">
@@ -301,10 +277,7 @@ export default function PolicyCreate() {
                                         <Clock className="h-4 w-4" />
                                         Session Duration
                                     </Label>
-                                    <Select 
-                                        value={data.session_duration} 
-                                        onValueChange={(value) => setData('session_duration', value)}
-                                    >
+                                    <Select value={data.session_duration} onValueChange={(value) => setData('session_duration', value)}>
                                         <SelectTrigger>
                                             <SelectValue />
                                         </SelectTrigger>
@@ -316,9 +289,7 @@ export default function PolicyCreate() {
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    <p className="text-xs text-muted-foreground">
-                                        How long users stay logged in before re-authenticating
-                                    </p>
+                                    <p className="text-xs text-muted-foreground">How long users stay logged in before re-authenticating</p>
                                 </div>
 
                                 <div className="space-y-4">
@@ -345,7 +316,7 @@ export default function PolicyCreate() {
                     </Card>
 
                     {/* Actions */}
-                    <div className="flex gap-3 pt-6 border-t">
+                    <div className="flex gap-3 border-t pt-6">
                         <Button type="submit" disabled={processing || data.rules.length === 0}>
                             {processing ? 'Setting up protection...' : 'Protect This App'}
                         </Button>

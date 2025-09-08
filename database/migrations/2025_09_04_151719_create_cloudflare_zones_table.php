@@ -20,7 +20,7 @@ return new class extends Migration
             $table->json('metadata')->nullable();
             $table->timestamp('synced_at')->nullable();
             $table->timestamps();
-            
+
             $table->index('zone_id');
             $table->index(['organisation_id', 'zone_id']);
         });

@@ -1,12 +1,12 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { ArrowLeft, Shield, User, Globe, Clock, CheckCircle, XCircle, AlertTriangle, RefreshCw, Search, Filter, Download, Activity, Eye } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, CheckCircle, Download, Filter, RefreshCw, Search, Shield, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
 interface AccessLog {
@@ -88,7 +88,7 @@ export default function AccessLogs() {
         if (searchTerm && searchTerm !== '') params.user_email = searchTerm;
         if (selectedAction && selectedAction !== 'all') params.action = selectedAction;
         if (selectedPolicy && selectedPolicy !== 'all') params.app_uid = selectedPolicy;
-        
+
         router.get(`/organisations/${organisation.id}/access-logs`, params);
     };
 
@@ -103,8 +103,9 @@ export default function AccessLogs() {
         router.reload();
     };
 
-    const filteredLogs = logs.filter(log => {
-        const matchesSearch = !searchTerm || 
+    const filteredLogs = logs.filter((log) => {
+        const matchesSearch =
+            !searchTerm ||
             log.user_email.toLowerCase().includes(searchTerm.toLowerCase()) ||
             log.application.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesSearch;
@@ -117,26 +118,24 @@ export default function AccessLogs() {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <div className="flex items-center gap-4 mb-2">
+                        <div className="mb-2 flex items-center gap-4">
                             <Link href={`/organisations/${organisation.id}`}>
                                 <Button variant="ghost" size="sm">
-                                    <ArrowLeft className="h-4 w-4 mr-2" />
+                                    <ArrowLeft className="mr-2 h-4 w-4" />
                                     Back to organization
                                 </Button>
                             </Link>
                         </div>
                         <h1 className="text-2xl font-semibold text-foreground">Access Logs</h1>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                            View authentication attempts and access logs from Cloudflare Access.
-                        </p>
+                        <p className="mt-1 text-sm text-muted-foreground">View authentication attempts and access logs from Cloudflare Access.</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Button onClick={handleRefresh} variant="outline">
-                            <RefreshCw className="h-4 w-4 mr-2" />
+                            <RefreshCw className="mr-2 h-4 w-4" />
                             Refresh
                         </Button>
                         <Button variant="outline">
-                            <Download className="h-4 w-4 mr-2" />
+                            <Download className="mr-2 h-4 w-4" />
                             Export
                         </Button>
                     </div>
@@ -150,8 +149,8 @@ export default function AccessLogs() {
                                 <AlertTriangle className="h-5 w-5" />
                                 <span className="font-medium">Unable to fetch access logs:</span>
                             </div>
-                            <p className="text-sm text-destructive mt-2">{error}</p>
-                            <p className="text-xs text-muted-foreground mt-2">
+                            <p className="mt-2 text-sm text-destructive">{error}</p>
+                            <p className="mt-2 text-xs text-muted-foreground">
                                 Make sure your Cloudflare API token has the correct permissions for Access logs.
                             </p>
                         </CardContent>
@@ -159,7 +158,7 @@ export default function AccessLogs() {
                 )}
 
                 {/* Statistics */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
                     <Card>
                         <CardContent className="pt-6">
                             <div className="text-2xl font-bold text-foreground">{stats.total}</div>
@@ -195,10 +194,10 @@ export default function AccessLogs() {
                 {/* Filters */}
                 <Card>
                     <CardContent className="pt-6">
-                        <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex flex-col gap-4 sm:flex-row">
                             <div className="flex-1">
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
                                     <Input
                                         placeholder="Search by user email or application..."
                                         value={searchTerm}
@@ -207,7 +206,7 @@ export default function AccessLogs() {
                                     />
                                 </div>
                             </div>
-                            
+
                             <Select value={selectedAction} onValueChange={setSelectedAction}>
                                 <SelectTrigger className="w-32">
                                     <SelectValue placeholder="Action" />
@@ -235,7 +234,7 @@ export default function AccessLogs() {
 
                             <div className="flex gap-2">
                                 <Button onClick={handleFilter} variant="outline">
-                                    <Filter className="h-4 w-4 mr-2" />
+                                    <Filter className="mr-2 h-4 w-4" />
                                     Apply
                                 </Button>
                                 {(searchTerm !== '' || selectedAction !== 'all' || selectedPolicy !== 'all') && (
@@ -252,24 +251,21 @@ export default function AccessLogs() {
                 {filteredLogs.length === 0 ? (
                     <Card>
                         <CardContent className="flex flex-col items-center justify-center py-12">
-                            <Shield className="h-12 w-12 text-muted-foreground mb-4" />
-                            <h3 className="text-lg font-medium text-foreground mb-2">
-                                {error ? 'Unable to load logs' : 'No access logs found'}
-                            </h3>
-                            <p className="text-muted-foreground text-center">
-                                {error 
+                            <Shield className="mb-4 h-12 w-12 text-muted-foreground" />
+                            <h3 className="mb-2 text-lg font-medium text-foreground">{error ? 'Unable to load logs' : 'No access logs found'}</h3>
+                            <p className="text-center text-muted-foreground">
+                                {error
                                     ? 'Check your API token permissions and try again.'
-                                    : logs.length === 0 
-                                        ? 'Access logs will appear here when users attempt to access your protected applications.'
-                                        : 'Try adjusting your search terms or filters.'
-                                }
+                                    : logs.length === 0
+                                      ? 'Access logs will appear here when users attempt to access your protected applications.'
+                                      : 'Try adjusting your search terms or filters.'}
                             </p>
                         </CardContent>
                     </Card>
                 ) : (
-                    <div className="border border-border rounded-lg overflow-hidden">
-                        <div className="bg-muted/50 px-4 py-3 border-b border-border">
-                            <div className="grid grid-cols-12 gap-3 items-center text-sm font-medium text-muted-foreground">
+                    <div className="overflow-hidden rounded-lg border border-border">
+                        <div className="border-b border-border bg-muted/50 px-4 py-3">
+                            <div className="grid grid-cols-12 items-center gap-3 text-sm font-medium text-muted-foreground">
                                 <div className="col-span-2">Status</div>
                                 <div className="col-span-2">Event</div>
                                 <div className="col-span-2">User</div>
@@ -280,49 +276,29 @@ export default function AccessLogs() {
                         </div>
                         <div className="divide-y divide-border">
                             {filteredLogs.map((log) => (
-                                <div key={log.id} className="px-4 py-3 hover:bg-muted/30 transition-colors">
-                                    <div className="grid grid-cols-12 gap-3 items-center">
+                                <div key={log.id} className="px-4 py-3 transition-colors hover:bg-muted/30">
+                                    <div className="grid grid-cols-12 items-center gap-3">
                                         <div className="col-span-2">
                                             <div className="flex items-center gap-1.5">
                                                 {getActionIcon(log)}
-                                                <div className="text-xs">
-                                                    {getActionBadge(log)}
-                                                </div>
+                                                <div className="text-xs">{getActionBadge(log)}</div>
                                             </div>
                                         </div>
                                         <div className="col-span-2 min-w-0">
-                                            <div className="text-sm font-medium text-foreground capitalize">
-                                                {log.action || 'login'}
-                                            </div>
-                                            {log.purpose && (
-                                                <div className="text-xs text-muted-foreground truncate">
-                                                    {log.purpose}
-                                                </div>
-                                            )}
+                                            <div className="text-sm font-medium text-foreground capitalize">{log.action || 'login'}</div>
+                                            {log.purpose && <div className="truncate text-xs text-muted-foreground">{log.purpose}</div>}
                                         </div>
                                         <div className="col-span-2 min-w-0">
-                                            <div className="text-sm text-foreground truncate">
-                                                {log.user_email}
-                                            </div>
-                                            {log.user_name && (
-                                                <div className="text-xs text-muted-foreground truncate">
-                                                    {log.user_name}
-                                                </div>
-                                            )}
+                                            <div className="truncate text-sm text-foreground">{log.user_email}</div>
+                                            {log.user_name && <div className="truncate text-xs text-muted-foreground">{log.user_name}</div>}
                                         </div>
                                         <div className="col-span-2 min-w-0">
-                                            <div className="text-sm text-foreground truncate">
-                                                {log.application}
-                                            </div>
+                                            <div className="truncate text-sm text-foreground">{log.application}</div>
                                         </div>
                                         <div className="col-span-2 min-w-0">
-                                            <div className="text-sm text-foreground">
-                                                {log.ip_address}
-                                            </div>
+                                            <div className="text-sm text-foreground">{log.ip_address}</div>
                                             {log.country !== 'Unknown' && (
-                                                <div className="text-xs text-muted-foreground uppercase">
-                                                    {log.country}
-                                                </div>
+                                                <div className="text-xs text-muted-foreground uppercase">{log.country}</div>
                                             )}
                                         </div>
                                         <div className="col-span-2 min-w-0">
@@ -331,9 +307,7 @@ export default function AccessLogs() {
                                                 <div>{new Date(log.created_at).toLocaleTimeString()}</div>
                                             </div>
                                             {log.ray_id && (
-                                                <div className="text-xs text-muted-foreground/70 font-mono mt-1">
-                                                    {log.ray_id.substring(0, 8)}...
-                                                </div>
+                                                <div className="mt-1 font-mono text-xs text-muted-foreground/70">{log.ray_id.substring(0, 8)}...</div>
                                             )}
                                         </div>
                                     </div>
@@ -348,14 +322,12 @@ export default function AccessLogs() {
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-lg">Access by Country</CardTitle>
-                            <CardDescription>
-                                Geographic distribution of access requests.
-                            </CardDescription>
+                            <CardDescription>Geographic distribution of access requests.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                                 {Object.entries(stats.countries)
-                                    .sort(([,a], [,b]) => b - a)
+                                    .sort(([, a], [, b]) => b - a)
                                     .slice(0, 8)
                                     .map(([country, count]) => (
                                         <div key={country} className="text-center">

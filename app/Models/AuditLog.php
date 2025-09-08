@@ -61,10 +61,10 @@ class AuditLog extends Model
         $description = $this->action;
 
         if ($this->entity_type) {
-            $description .= ' ' . str_replace('_', ' ', $this->entity_type);
-            
+            $description .= ' '.str_replace('_', ' ', $this->entity_type);
+
             if ($this->entity_id) {
-                $description .= ' #' . $this->entity_id;
+                $description .= ' #'.$this->entity_id;
             }
         }
 
@@ -73,12 +73,12 @@ class AuditLog extends Model
 
     public function getFormattedChangesAttribute(): array
     {
-        if (!$this->changes) {
+        if (! $this->changes) {
             return [];
         }
 
         $formatted = [];
-        
+
         foreach ($this->changes as $field => $values) {
             if (is_array($values) && isset($values['old']) && isset($values['new'])) {
                 $formatted[] = [

@@ -1,332 +1,450 @@
+import Footer from '@/components/footer';
+import Navigation from '@/components/navigation';
 import { dashboard, login } from '@/routes';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Shield, Zap, Globe, Users, ArrowRight, CheckCircle, Eye, TrendingUp, Clock, Mail, Star, Target, Award, Heart } from 'lucide-react';
-
-const team = [
-    {
-        name: 'Sarah Chen',
-        role: 'Chief Executive Officer',
-        bio: 'Former security architect at CloudFlare with 10+ years in Zero Trust security.',
-        avatar: 'SC',
-    },
-    {
-        name: 'Marcus Rodriguez',
-        role: 'Chief Technology Officer',
-        bio: 'Ex-Google Cloud engineer specializing in enterprise security infrastructure.',
-        avatar: 'MR',
-    },
-    {
-        name: 'Emily Watson',
-        role: 'Head of Product',
-        bio: 'Product leader with expertise in developer tools and security platforms.',
-        avatar: 'EW',
-    },
-];
-
-const values = [
-    {
-        icon: Shield,
-        title: 'Security First',
-        description: 'We prioritize security in everything we build, ensuring your applications are protected with enterprise-grade Zero Trust principles.',
-        color: 'text-blue-600',
-    },
-    {
-        icon: Target,
-        title: 'Simple Solutions',
-        description: 'Complex security shouldn\'t require complex tools. We make enterprise security accessible to organizations of all sizes.',
-        color: 'text-green-600',
-    },
-    {
-        icon: Heart,
-        title: 'Customer Success',
-        description: 'Your success is our success. We\'re committed to helping you achieve your security goals with outstanding support.',
-        color: 'text-red-600',
-    },
-    {
-        icon: Award,
-        title: 'Innovation',
-        description: 'We continuously innovate to stay ahead of emerging threats and provide cutting-edge security solutions.',
-        color: 'text-purple-600',
-    },
-];
+import { ArrowRight, CheckCircle, Clock, Code, Shield, UserCheck, Users, Zap } from 'lucide-react';
 
 export default function About() {
     const { auth } = usePage<SharedData>().props;
 
     return (
         <>
-            <Head title="About Stnel - Cloudflare Access Management">
-                <meta name="description" content="Learn about Stnel's mission to simplify enterprise security through innovative Cloudflare Access management solutions." />
-                <meta name="keywords" content="About Stnel, Cloudflare Access, Zero Trust, Security Team, Company Mission" />
-                <link rel="preconnect" href="https://fonts.bunny.net" />
-                <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700" rel="stylesheet" />
+            <Head title="About Stnel - The Missing Interface for Cloudflare Access">
+                <meta
+                    name="description"
+                    content="Stnel transforms Cloudflare Access from a complex API into an intuitive visual interface. Built by developers who understand the pain of enterprise security management."
+                />
+                <meta name="keywords" content="Stnel, Cloudflare Access Management, Zero Trust Interface, Security Dashboard" />
             </Head>
 
-            <div className="bg-white dark:bg-gray-900">
-                {/* Navigation */}
-                <nav className="relative z-50">
-                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                        <div className="flex h-16 items-center justify-between">
-                            <div className="flex items-center">
-                                <Link href="/" className="flex-shrink-0">
-                                    <img
-                                        className="h-8 w-auto"
-                                        src="/stnel-logo.svg"
-                                        alt="Stnel"
-                                    />
-                                </Link>
-                                <div className="ml-8 hidden md:block">
-                                    <div className="flex items-baseline space-x-8">
-                                        <Link href="/" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 text-sm font-medium transition-colors">
-                                            Home
-                                        </Link>
-                                        <Link href="/#features" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 text-sm font-medium transition-colors">
-                                            Features
-                                        </Link>
-                                        <Link href="/#pricing" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 text-sm font-medium transition-colors">
-                                            Pricing
-                                        </Link>
-                                        <Link href="/about" className="text-blue-600 dark:text-blue-400 px-3 py-2 text-sm font-medium">
-                                            About
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center space-x-4">
-                                {auth.user ? (
-                                    <Link
-                                        href={dashboard()}
-                                        className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 transition-colors"
-                                    >
-                                        Dashboard
-                                        <ArrowRight className="ml-2 h-4 w-4" />
-                                    </Link>
-                                ) : (
-                                    <>
-                                        <Link
-                                            href={login()}
-                                            className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 text-sm font-medium transition-colors"
-                                        >
-                                            Sign in
-                                        </Link>
-                                        <Link
-                                            href={login()}
-                                            className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 transition-colors"
-                                        >
-                                            Get Started
-                                            <ArrowRight className="ml-2 h-4 w-4" />
-                                        </Link>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </nav>
+            <div className="bg-white">
+                <Navigation currentPage="about" />
 
                 {/* Hero Section */}
-                <section className="relative pt-20 pb-16 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-blue-900/20" />
-                    
+                <section className="relative overflow-hidden pt-20 pb-20">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#343434]/5 via-white to-[#FFCD45]/10" />
+
+                    {/* Background Pattern */}
+                    <div className="absolute inset-0 overflow-hidden">
+                        <div className="absolute top-20 right-20 h-72 w-72 rounded-full bg-[#FFCD45]/10 blur-3xl"></div>
+                        <div className="absolute bottom-20 left-20 h-72 w-72 rounded-full bg-[#343434]/5 blur-3xl"></div>
+                        <div className="absolute top-1/2 right-1/3 h-40 w-40 rounded-full bg-[#F38020]/10 blur-2xl"></div>
+                    </div>
+
                     <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+                        <div className="grid min-h-[600px] items-center gap-16 lg:grid-cols-2">
+                            <div>
+                                <div className="mb-8 inline-flex items-center rounded-full bg-[#343434]/10 px-4 py-2">
+                                    <Code className="mr-2 h-4 w-4 text-[#343434]" />
+                                    <span className="text-sm font-semibold text-[#343434]">BUILT BY DEVELOPERS, FOR EVERYONE</span>
+                                </div>
+
+                                <h1 className="mb-6 text-5xl font-bold tracking-tight text-[#343434] sm:text-6xl">
+                                    <span className="block">The Missing</span>
+                                    <span className="block text-[#F38020]">Interface</span>
+                                    <span className="block">for Cloudflare Access</span>
+                                </h1>
+
+                                <p className="mb-6 text-xl leading-8 text-gray-600">
+                                    Cloudflare Access is incredibly powerful. Managing it shouldn't be incredibly painful.
+                                </p>
+
+                                <p className="mb-8 text-lg text-gray-600">
+                                    We got tired of writing JSON policies, memorizing API endpoints, and explaining to teammates why they couldn't
+                                    manage access to their own applications.
+                                </p>
+
+                                <div className="flex flex-col gap-4 sm:flex-row">
+                                    <Link
+                                        href={auth.user ? dashboard() : login()}
+                                        className="inline-flex items-center rounded-2xl bg-[#FFCD45] px-6 py-3 text-base font-semibold text-[#343434] transition-all duration-200 hover:bg-[#FFD700]"
+                                    >
+                                        {auth.user ? 'Go to Dashboard' : 'Try the Interface'}
+                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                    </Link>
+                                    <Link
+                                        href="/use-cases"
+                                        className="inline-flex items-center rounded-2xl border-2 border-gray-200 bg-white px-6 py-3 text-base font-semibold text-[#343434] transition-all duration-200 hover:border-[#FFCD45]"
+                                    >
+                                        See Real Examples
+                                    </Link>
+                                </div>
+                            </div>
+
+                            <div className="relative">
+                                {/* Before/After Comparison */}
+                                <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-2xl">
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div>
+                                            <h3 className="mb-4 flex items-center text-sm font-semibold text-red-600">
+                                                <div className="mr-2 h-2 w-2 rounded-full bg-red-500"></div>
+                                                WITHOUT STNEL
+                                            </h3>
+                                            <div className="space-y-3">
+                                                <div className="rounded-lg border border-red-200 bg-red-50 p-3">
+                                                    <div className="font-mono text-xs leading-tight text-red-700">
+                                                        <div>curl -X POST \</div>
+                                                        <div>"https://api.cloudflare.com/..." \</div>
+                                                        <div>-H "Content-Type: application/json" \</div>
+                                                        <div>-d '{`{"rules": [{"include": [...]}]}`}'</div>
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-1 text-xs text-gray-600">
+                                                    <div className="flex items-center">
+                                                        <Clock className="mr-2 h-3 w-3 text-red-500" />
+                                                        <span>2-4 hours per policy</span>
+                                                    </div>
+                                                    <div className="flex items-center">
+                                                        <Users className="mr-2 h-3 w-3 text-red-500" />
+                                                        <span>Technical expertise required</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <h3 className="mb-4 flex items-center text-sm font-semibold text-green-600">
+                                                <div className="mr-2 h-2 w-2 rounded-full bg-green-500"></div>
+                                                WITH STNEL
+                                            </h3>
+                                            <div className="space-y-3">
+                                                <div className="rounded-lg border border-green-200 bg-green-50 p-3">
+                                                    <div className="space-y-2">
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-xs font-medium text-gray-700">Add User</span>
+                                                            <CheckCircle className="h-4 w-4 text-green-500" />
+                                                        </div>
+                                                        <div className="h-1 w-full rounded-full bg-gray-200">
+                                                            <div className="h-1 w-full rounded-full bg-green-500"></div>
+                                                        </div>
+                                                        <div className="text-xs text-green-700">john@company.com added</div>
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-1 text-xs text-gray-600">
+                                                    <div className="flex items-center">
+                                                        <Zap className="mr-2 h-3 w-3 text-green-500" />
+                                                        <span>30 seconds per policy</span>
+                                                    </div>
+                                                    <div className="flex items-center">
+                                                        <UserCheck className="mr-2 h-3 w-3 text-green-500" />
+                                                        <span>Anyone can manage access</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-6 border-t border-gray-200 pt-6">
+                                        <div className="flex items-center justify-between text-center">
+                                            <div>
+                                                <div className="text-2xl font-bold text-red-600">240x</div>
+                                                <div className="text-xs text-gray-600">Time difference</div>
+                                            </div>
+                                            <ArrowRight className="h-6 w-6 text-[#FFCD45]" />
+                                            <div>
+                                                <div className="text-2xl font-bold text-green-600">Faster</div>
+                                                <div className="text-xs text-gray-600">With Stnel</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Floating Stats */}
+                                <div className="absolute -top-4 -right-4 rounded-2xl bg-[#FFCD45] p-4 shadow-lg">
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold text-[#343434]">0</div>
+                                        <div className="text-xs text-[#343434]">JSON Required</div>
+                                    </div>
+                                </div>
+
+                                <div className="absolute -bottom-4 -left-4 rounded-2xl bg-[#F38020] p-4 shadow-lg">
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold text-white">100%</div>
+                                        <div className="text-xs text-white">Visual</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* The Reality */}
+                <section className="bg-gray-50 py-20">
+                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                        <div className="mx-auto max-w-5xl">
+                            <div className="mb-16 text-center">
+                                <h2 className="mb-4 text-3xl font-bold text-[#343434]">The Reality of Cloudflare Access Management</h2>
+                                <p className="text-lg text-gray-600">Every developer knows this pain</p>
+                            </div>
+
+                            <div className="mb-16 rounded-3xl bg-[#343434] p-8">
+                                <div className="grid items-center gap-12 lg:grid-cols-2">
+                                    <div>
+                                        <h3 className="mb-6 text-xl font-semibold text-white">What it takes to add one user:</h3>
+                                        <div className="space-y-4 text-gray-300">
+                                            <div className="flex items-start">
+                                                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#FFCD45] text-sm font-bold text-[#343434]">
+                                                    1
+                                                </div>
+                                                <div className="ml-3">
+                                                    <p>Find the Cloudflare API documentation</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start">
+                                                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#FFCD45] text-sm font-bold text-[#343434]">
+                                                    2
+                                                </div>
+                                                <div className="ml-3">
+                                                    <p>Generate API tokens with correct permissions</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start">
+                                                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#FFCD45] text-sm font-bold text-[#343434]">
+                                                    3
+                                                </div>
+                                                <div className="ml-3">
+                                                    <p>Write JSON policy with exact syntax</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start">
+                                                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#FFCD45] text-sm font-bold text-[#343434]">
+                                                    4
+                                                </div>
+                                                <div className="ml-3">
+                                                    <p>Test policy via command line or Postman</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start">
+                                                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#FFCD45] text-sm font-bold text-[#343434]">
+                                                    5
+                                                </div>
+                                                <div className="ml-3">
+                                                    <p>Deploy and hope it works</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="mt-6 rounded-lg border border-red-800/30 bg-red-900/20 p-4">
+                                            <p className="text-sm text-red-300">
+                                                <strong>Time invested:</strong> 2-4 hours for experienced developers
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h3 className="mb-6 text-xl font-semibold text-white">What it takes with Stnel:</h3>
+                                        <div className="space-y-4 text-gray-300">
+                                            <div className="flex items-start">
+                                                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#FFCD45] text-sm font-bold text-[#343434]">
+                                                    1
+                                                </div>
+                                                <div className="ml-3">
+                                                    <p>Enter user's email address</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start">
+                                                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#FFCD45] text-sm font-bold text-[#343434]">
+                                                    2
+                                                </div>
+                                                <div className="ml-3">
+                                                    <p>Select applications from dropdown</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start">
+                                                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#FFCD45] text-sm font-bold text-[#343434]">
+                                                    3
+                                                </div>
+                                                <div className="ml-3">
+                                                    <p>Click "Add User"</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="mt-6 rounded-lg border border-green-800/30 bg-green-900/20 p-4">
+                                            <p className="text-sm text-green-300">
+                                                <strong>Time invested:</strong> 30 seconds for anyone on your team
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="text-center">
+                                <p className="text-lg font-medium text-[#343434]">This isn't about being lazy. It's about being productive.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Who Built This */}
+                <section className="bg-white py-20">
+                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                        <div className="mx-auto max-w-4xl">
+                            <div className="mb-16 text-center">
+                                <h2 className="mb-4 text-3xl font-bold text-[#343434]">Built by People Who Feel Your Pain</h2>
+                                <p className="text-lg text-gray-600">We've been in your shoes</p>
+                            </div>
+
+                            <div className="rounded-3xl bg-white p-8 shadow-lg">
+                                <div className="prose prose-lg max-w-none text-gray-600">
+                                    <p className="mb-6 text-xl leading-relaxed">Stnel was born from frustration. Real frustration.</p>
+
+                                    <p className="mb-6">
+                                        We spent years working at companies where security was critical, but the tools to manage it were built for
+                                        security engineers, not the teams who actually needed to use them every day.
+                                    </p>
+
+                                    <p className="mb-6">
+                                        Product managers couldn't grant access to staging environments. Designers couldn't test protected features.
+                                        Support teams couldn't help customers with login issues. Everything required a developer, a ticket, and way
+                                        too much time.
+                                    </p>
+
+                                    <p className="mb-6">
+                                        Cloudflare Access solved the security problem beautifully. But it created a new problem:
+                                        <strong> complexity</strong>. We decided to solve that too.
+                                    </p>
+
+                                    <div className="rounded-2xl border border-[#FFCD45]/20 bg-[#FFCD45]/10 p-6">
+                                        <p className="mb-2 font-medium text-[#343434]">Our mission is simple:</p>
+                                        <p className="mb-0">
+                                            Make enterprise-grade security accessible to teams of all sizes, without compromising on power or
+                                            flexibility.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* What Makes Us Different */}
+                <section className="bg-gray-50 py-20">
+                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                        <div className="mb-16 text-center">
+                            <h2 className="mb-4 text-3xl font-bold text-[#343434]">What Makes Stnel Different</h2>
+                            <p className="text-lg text-gray-600">We're not just another security tool</p>
+                        </div>
+
+                        <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-3">
+                            <div className="text-center">
+                                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100">
+                                    <Users className="h-8 w-8 text-[#F38020]" />
+                                </div>
+                                <h3 className="mb-4 text-xl font-semibold text-[#343434]">Built for Humans</h3>
+                                <p className="leading-relaxed text-gray-600">
+                                    Every feature is designed for the person using it, not the person building it. If your product manager can't use
+                                    it, we haven't finished it.
+                                </p>
+                            </div>
+
+                            <div className="text-center">
+                                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100">
+                                    <Zap className="h-8 w-8 text-[#F38020]" />
+                                </div>
+                                <h3 className="mb-4 text-xl font-semibold text-[#343434]">Obsessively Fast</h3>
+                                <p className="leading-relaxed text-gray-600">
+                                    We measure success in seconds saved, not features shipped. Every click matters, every page load counts.
+                                </p>
+                            </div>
+
+                            <div className="text-center">
+                                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100">
+                                    <Shield className="h-8 w-8 text-[#F38020]" />
+                                </div>
+                                <h3 className="mb-4 text-xl font-semibold text-[#343434]">Never Compromises</h3>
+                                <p className="leading-relaxed text-gray-600">
+                                    Simple doesn't mean limited. You get all the power of Cloudflare Access, just without the complexity.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* The Technical Reality */}
+                <section className="bg-white py-20">
+                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                        <div className="mx-auto max-w-4xl">
+                            <div className="mb-16 text-center">
+                                <h2 className="mb-4 text-3xl font-bold text-[#343434]">The Technical Reality</h2>
+                                <p className="text-lg text-gray-600">What we are and what we aren't</p>
+                            </div>
+
+                            <div className="grid gap-8 lg:grid-cols-2">
+                                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                                    <h3 className="mb-4 flex items-center font-semibold text-[#343434]">
+                                        <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
+                                        What Stnel Is
+                                    </h3>
+                                    <ul className="space-y-3 text-gray-600">
+                                        <li>• A visual interface for Cloudflare Access</li>
+                                        <li>• An API wrapper that makes complex operations simple</li>
+                                        <li>• A notification system for access events</li>
+                                        <li>• A team collaboration tool for security management</li>
+                                        <li>• A way to delegate access control without technical knowledge</li>
+                                    </ul>
+                                </div>
+
+                                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                                    <h3 className="mb-4 font-semibold text-[#343434]">What Stnel Isn't</h3>
+                                    <ul className="space-y-3 text-gray-600">
+                                        <li>• A replacement for Cloudflare Access</li>
+                                        <li>• A security product (we rely on Cloudflare for that)</li>
+                                        <li>• A Cloudflare product (we're completely independent)</li>
+                                        <li>• A way to avoid paying Cloudflare (you still need their account)</li>
+                                        <li>• Magic (everything we do, you could do manually)</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div className="mt-12 rounded-2xl border border-blue-200 bg-blue-50 p-8">
+                                <div className="text-center">
+                                    <h3 className="mb-4 font-semibold text-blue-900">Complete Transparency</h3>
+                                    <p className="mb-6 text-blue-800">
+                                        Stnel is an independent tool built to make Cloudflare Access easier to use. We are not affiliated with,
+                                        endorsed by, or partnered with Cloudflare. We're just developers who got tired of writing JSON policies.
+                                    </p>
+                                    <p className="text-sm text-blue-700">
+                                        You need an active Cloudflare account and Cloudflare Access subscription to use Stnel.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Try It Yourself */}
+                <section className="bg-gray-50 py-20">
+                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
                         <div className="mx-auto max-w-3xl text-center">
-                            <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
-                                <span className="block">Securing the Future</span>
-                                <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
-                                    One App at a Time
-                                </span>
-                            </h1>
-                            
-                            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-                                At Stnel, we believe that enterprise security shouldn't be complicated. 
-                                We're on a mission to make Zero Trust security accessible to every organization, 
-                                regardless of size or technical expertise.
+                            <h2 className="mb-8 text-3xl font-bold text-[#343434]">See the Difference Yourself</h2>
+                            <p className="mb-12 text-lg text-gray-600">
+                                Don't take our word for it. Connect your Cloudflare account and see how much time you can save.
                             </p>
-                        </div>
-                    </div>
-                </section>
 
-                {/* Mission Section */}
-                <section className="py-24 bg-gray-50 dark:bg-gray-800/50">
-                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                        <div className="mx-auto max-w-3xl text-center mb-16">
-                            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                Our Mission
-                            </h2>
-                            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-                                We're building the bridge between complex enterprise security and simple, intuitive management. 
-                                Our goal is to empower organizations to protect their most valuable assets without the complexity traditionally associated with enterprise security.
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-                            <div className="text-center">
-                                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/30">
-                                    <Shield className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-                                </div>
-                                <h3 className="mt-6 text-lg font-semibold text-gray-900 dark:text-white">10,000+</h3>
-                                <p className="text-gray-600 dark:text-gray-400">Applications Protected</p>
-                            </div>
-                            
-                            <div className="text-center">
-                                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-xl bg-green-100 dark:bg-green-900/30">
-                                    <Users className="h-8 w-8 text-green-600 dark:text-green-400" />
-                                </div>
-                                <h3 className="mt-6 text-lg font-semibold text-gray-900 dark:text-white">500+</h3>
-                                <p className="text-gray-600 dark:text-gray-400">Organizations Secured</p>
-                            </div>
-                            
-                            <div className="text-center">
-                                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-xl bg-purple-100 dark:bg-purple-900/30">
-                                    <Globe className="h-8 w-8 text-purple-600 dark:text-purple-400" />
-                                </div>
-                                <h3 className="mt-6 text-lg font-semibold text-gray-900 dark:text-white">50+</h3>
-                                <p className="text-gray-600 dark:text-gray-400">Countries Served</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Values Section */}
-                <section className="py-24">
-                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                        <div className="mx-auto max-w-2xl text-center mb-16">
-                            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                Our Values
-                            </h2>
-                            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-                                The principles that guide everything we do at Stnel.
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                            {values.map((value, index) => (
-                                <div key={value.title} className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200 dark:bg-gray-900 dark:ring-gray-800">
-                                    <div className={`inline-flex rounded-xl p-3 ${value.color} bg-opacity-10`}>
-                                        <value.icon className={`h-6 w-6 ${value.color}`} />
-                                    </div>
-                                    <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-white">
-                                        {value.title}
-                                    </h3>
-                                    <p className="mt-2 text-gray-600 dark:text-gray-400 leading-relaxed">
-                                        {value.description}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Team Section */}
-                <section className="py-24 bg-gray-50 dark:bg-gray-800/50">
-                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                        <div className="mx-auto max-w-2xl text-center mb-16">
-                            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                Meet Our Team
-                            </h2>
-                            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-                                Security experts, engineers, and innovators working together to protect your digital assets.
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                            {team.map((member) => (
-                                <div key={member.name} className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200 dark:bg-gray-900 dark:ring-gray-800 text-center">
-                                    <div className="mx-auto h-20 w-20 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xl mb-4">
-                                        {member.avatar}
-                                    </div>
-                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                        {member.name}
-                                    </h3>
-                                    <p className="text-sm text-blue-600 dark:text-blue-400 mt-1 mb-3">
-                                        {member.role}
-                                    </p>
-                                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                                        {member.bio}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Story Section */}
-                <section className="py-24">
-                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                        <div className="mx-auto max-w-3xl">
-                            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-8">
-                                Our Story
-                            </h2>
-                            
-                            <div className="prose prose-lg prose-gray dark:prose-invert">
-                                <p>
-                                    Stnel was born from a simple observation: while Cloudflare Access provides world-class Zero Trust security, 
-                                    managing it across multiple applications and organizations was unnecessarily complex.
-                                </p>
-                                
-                                <p>
-                                    Our founders, having worked at some of the world's largest technology companies, witnessed firsthand how 
-                                    security teams struggled with fragmented tools, manual processes, and lack of visibility into their 
-                                    access management infrastructure.
-                                </p>
-                                
-                                <p>
-                                    We set out to build something different. A platform that would make enterprise security accessible to 
-                                    organizations of all sizes, without compromising on the robust security features that enterprises require.
-                                </p>
-                                
-                                <p>
-                                    Today, Stnel serves hundreds of organizations worldwide, from startups to Fortune 500 companies, 
-                                    helping them secure their most valuable digital assets with confidence and simplicity.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* CTA Section */}
-                <section className="py-24 bg-gray-50 dark:bg-gray-800/50">
-                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                        <div className="mx-auto max-w-2xl text-center">
-                            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                Join Our Mission
-                            </h2>
-                            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-                                Ready to transform your organization's security posture? Start your free trial today.
-                            </p>
-                            <div className="mt-10 flex items-center justify-center gap-4">
+                            <div className="mb-8 flex flex-col justify-center gap-4 sm:flex-row">
                                 <Link
                                     href={auth.user ? dashboard() : login()}
-                                    className="group inline-flex items-center rounded-xl bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-lg hover:bg-blue-700 hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                                    className="inline-flex items-center rounded-2xl bg-[#FFCD45] px-8 py-4 text-lg font-semibold text-[#343434] shadow-lg transition-all duration-200 hover:bg-[#FFD700] hover:shadow-xl"
                                 >
                                     {auth.user ? 'Go to Dashboard' : 'Start Free Trial'}
-                                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                                    <ArrowRight className="ml-2 h-5 w-5" />
+                                </Link>
+                                <Link
+                                    href="/why-cloudflare"
+                                    className="inline-flex items-center rounded-2xl border-2 border-gray-200 bg-white px-8 py-4 text-lg font-semibold text-[#343434] transition-all duration-200 hover:border-[#FFCD45]"
+                                >
+                                    Learn About Cloudflare
                                 </Link>
                             </div>
+
+                            <p className="text-sm text-gray-500">
+                                Free forever for up to 50 users • No credit card required • Connect in under 2 minutes
+                            </p>
                         </div>
                     </div>
                 </section>
 
-                {/* Footer */}
-                <footer className="bg-gray-900">
-                    <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-                        <div className="flex flex-col items-center justify-between lg:flex-row">
-                            <div className="flex items-center">
-                                <img
-                                    className="h-8 w-auto"
-                                    src="/stnel-logo.svg"
-                                    alt="Stnel"
-                                />
-                                <span className="ml-3 text-white font-semibold">Stnel</span>
-                            </div>
-                            <div className="mt-8 lg:mt-0">
-                                <p className="text-center text-sm text-gray-400 lg:text-left">
-                                    &copy; 2025 Stnel. All rights reserved. Cloudflare Access management made simple.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
+                <Footer />
             </div>
         </>
     );

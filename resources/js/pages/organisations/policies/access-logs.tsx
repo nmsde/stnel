@@ -1,12 +1,12 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { ArrowLeft, Shield, User, Globe, Clock, CheckCircle, XCircle, AlertTriangle, RefreshCw, Search, Filter, Download, Activity, Eye } from 'lucide-react';
+import { Activity, AlertTriangle, ArrowLeft, CheckCircle, Filter, Globe, RefreshCw, Search, Shield, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
 interface AccessLog {
@@ -94,7 +94,7 @@ export default function PolicyAccessLogs() {
         const params: Record<string, string> = {};
         if (searchTerm && searchTerm !== '') params.user_email = searchTerm;
         if (selectedAction && selectedAction !== 'all') params.action = selectedAction;
-        
+
         router.get(`/organisations/${organisation.id}/policies/${policy.id}/access-logs`, params);
     };
 
@@ -108,9 +108,8 @@ export default function PolicyAccessLogs() {
         router.reload();
     };
 
-    const filteredLogs = logs.filter(log => {
-        const matchesSearch = !searchTerm || 
-            log.user_email.toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredLogs = logs.filter((log) => {
+        const matchesSearch = !searchTerm || log.user_email.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesSearch;
     });
 
@@ -121,10 +120,10 @@ export default function PolicyAccessLogs() {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <div className="flex items-center gap-4 mb-2">
+                        <div className="mb-2 flex items-center gap-4">
                             <Link href={`/organisations/${organisation.id}/policies/${policy.id}`}>
                                 <Button variant="ghost" size="sm">
-                                    <ArrowLeft className="h-4 w-4 mr-2" />
+                                    <ArrowLeft className="mr-2 h-4 w-4" />
                                     Back to policy
                                 </Button>
                             </Link>
@@ -136,12 +135,12 @@ export default function PolicyAccessLogs() {
                     </div>
                     <div className="flex items-center gap-2">
                         <Button onClick={handleRefresh} variant="outline">
-                            <RefreshCw className="h-4 w-4 mr-2" />
+                            <RefreshCw className="mr-2 h-4 w-4" />
                             Refresh
                         </Button>
                         <Link href={`/organisations/${organisation.id}/access-logs`}>
                             <Button variant="outline">
-                                <Activity className="h-4 w-4 mr-2" />
+                                <Activity className="mr-2 h-4 w-4" />
                                 All Logs
                             </Button>
                         </Link>
@@ -155,9 +154,7 @@ export default function PolicyAccessLogs() {
                             <div className="flex items-center gap-2">
                                 <Shield className="h-5 w-5 text-blue-500" />
                                 <span className="font-medium">{policy.name}</span>
-                                <Badge variant={policy.status === 'active' ? 'default' : 'secondary'}>
-                                    {policy.status}
-                                </Badge>
+                                <Badge variant={policy.status === 'active' ? 'default' : 'secondary'}>{policy.status}</Badge>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                                 <Globe className="h-4 w-4" />
@@ -180,8 +177,8 @@ export default function PolicyAccessLogs() {
                                 <AlertTriangle className="h-5 w-5" />
                                 <span className="font-medium">Unable to fetch access logs:</span>
                             </div>
-                            <p className="text-sm text-destructive mt-2">{error}</p>
-                            <p className="text-xs text-muted-foreground mt-2">
+                            <p className="mt-2 text-sm text-destructive">{error}</p>
+                            <p className="mt-2 text-xs text-muted-foreground">
                                 This policy may not be synced with Cloudflare yet, or the API token needs Access logs permissions.
                             </p>
                         </CardContent>
@@ -189,7 +186,7 @@ export default function PolicyAccessLogs() {
                 )}
 
                 {/* Statistics */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                     <Card>
                         <CardContent className="pt-6">
                             <div className="text-2xl font-bold text-foreground">{stats.total}</div>
@@ -219,10 +216,10 @@ export default function PolicyAccessLogs() {
                 {/* Filters */}
                 <Card>
                     <CardContent className="pt-6">
-                        <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex flex-col gap-4 sm:flex-row">
                             <div className="flex-1">
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
                                     <Input
                                         placeholder="Search by user email..."
                                         value={searchTerm}
@@ -231,7 +228,7 @@ export default function PolicyAccessLogs() {
                                     />
                                 </div>
                             </div>
-                            
+
                             <Select value={selectedAction} onValueChange={setSelectedAction}>
                                 <SelectTrigger className="w-32">
                                     <SelectValue placeholder="Action" />
@@ -245,7 +242,7 @@ export default function PolicyAccessLogs() {
 
                             <div className="flex gap-2">
                                 <Button onClick={handleFilter} variant="outline">
-                                    <Filter className="h-4 w-4 mr-2" />
+                                    <Filter className="mr-2 h-4 w-4" />
                                     Apply
                                 </Button>
                                 {(searchTerm !== '' || selectedAction !== 'all') && (
@@ -262,23 +259,20 @@ export default function PolicyAccessLogs() {
                 {filteredLogs.length === 0 ? (
                     <Card>
                         <CardContent className="flex flex-col items-center justify-center py-12">
-                            <Shield className="h-12 w-12 text-muted-foreground mb-4" />
-                            <h3 className="text-lg font-medium text-foreground mb-2">
-                                {error ? 'Unable to load logs' : 'No access logs found'}
-                            </h3>
-                            <p className="text-muted-foreground text-center">
-                                {error 
+                            <Shield className="mb-4 h-12 w-12 text-muted-foreground" />
+                            <h3 className="mb-2 text-lg font-medium text-foreground">{error ? 'Unable to load logs' : 'No access logs found'}</h3>
+                            <p className="text-center text-muted-foreground">
+                                {error
                                     ? 'Make sure this policy is synced with Cloudflare and your API token has the correct permissions.'
-                                    : logs.length === 0 
-                                        ? 'Access logs will appear here when users attempt to access this application.'
-                                        : 'Try adjusting your search terms or filters.'
-                                }
+                                    : logs.length === 0
+                                      ? 'Access logs will appear here when users attempt to access this application.'
+                                      : 'Try adjusting your search terms or filters.'}
                             </p>
                             {!error && policy.status === 'pending' && (
                                 <div className="mt-4">
                                     <Link href={`/organisations/${organisation.id}/policies/${policy.id}`}>
                                         <Button variant="outline">
-                                            <RefreshCw className="h-4 w-4 mr-2" />
+                                            <RefreshCw className="mr-2 h-4 w-4" />
                                             Sync Policy First
                                         </Button>
                                     </Link>
@@ -287,8 +281,8 @@ export default function PolicyAccessLogs() {
                         </CardContent>
                     </Card>
                 ) : (
-                    <div className="border border-border rounded-lg overflow-hidden">
-                        <div className="bg-muted/50 px-4 py-3 border-b border-border">
+                    <div className="overflow-hidden rounded-lg border border-border">
+                        <div className="border-b border-border bg-muted/50 px-4 py-3">
                             <div className="flex items-center text-sm font-medium text-muted-foreground">
                                 <div className="w-16">Status</div>
                                 <div className="min-w-0 flex-1">User</div>
@@ -299,44 +293,26 @@ export default function PolicyAccessLogs() {
                         </div>
                         <div className="divide-y divide-border">
                             {filteredLogs.map((log) => (
-                                <div key={log.id} className="px-4 py-3 hover:bg-muted/30 transition-colors">
+                                <div key={log.id} className="px-4 py-3 transition-colors hover:bg-muted/30">
                                     <div className="flex items-center">
-                                        <div className="w-16 flex items-center">
+                                        <div className="flex w-16 items-center">
                                             <div className="flex items-center gap-1">
                                                 {getActionIcon(log)}
-                                                <span className="text-xs">
-                                                    {getActionBadge(log)}
-                                                </span>
+                                                <span className="text-xs">{getActionBadge(log)}</span>
                                             </div>
                                         </div>
                                         <div className="min-w-0 flex-1">
-                                            <div className="font-medium text-foreground truncate">
-                                                {log.user_email}
-                                            </div>
-                                            {log.user_name && (
-                                                <div className="text-xs text-muted-foreground truncate">
-                                                    {log.user_name}
-                                                </div>
-                                            )}
+                                            <div className="truncate font-medium text-foreground">{log.user_email}</div>
+                                            {log.user_name && <div className="truncate text-xs text-muted-foreground">{log.user_name}</div>}
                                         </div>
                                         <div className="w-32">
-                                            <div className="text-sm text-foreground">
-                                                {log.ip_address}
-                                            </div>
-                                            {log.country !== 'Unknown' && (
-                                                <div className="text-xs text-muted-foreground">
-                                                    {log.country}
-                                                </div>
-                                            )}
+                                            <div className="text-sm text-foreground">{log.ip_address}</div>
+                                            {log.country !== 'Unknown' && <div className="text-xs text-muted-foreground">{log.country}</div>}
                                         </div>
-                                        <div className="w-40 text-xs text-muted-foreground">
-                                            {new Date(log.created_at).toLocaleString()}
-                                        </div>
+                                        <div className="w-40 text-xs text-muted-foreground">{new Date(log.created_at).toLocaleString()}</div>
                                         <div className="w-20">
                                             {log.ray_id && (
-                                                <code className="text-xs text-muted-foreground font-mono">
-                                                    {log.ray_id.substring(0, 8)}
-                                                </code>
+                                                <code className="font-mono text-xs text-muted-foreground">{log.ray_id.substring(0, 8)}</code>
                                             )}
                                         </div>
                                     </div>

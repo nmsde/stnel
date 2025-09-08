@@ -62,10 +62,11 @@ class AccessPolicy extends Model
 
     public function getFullUrlAttribute(): string
     {
-        $url = 'https://' . $this->domain;
+        $url = 'https://'.$this->domain;
         if ($this->path) {
-            $url .= '/' . ltrim($this->path, '/');
+            $url .= '/'.ltrim($this->path, '/');
         }
+
         return $url;
     }
 
@@ -116,7 +117,7 @@ class AccessPolicy extends Model
     public function removeRule(string $type, string $value): void
     {
         $rules = collect($this->rules ?? [])
-            ->reject(fn($rule) => $rule['type'] === $type && $rule['value'] === $value)
+            ->reject(fn ($rule) => $rule['type'] === $type && $rule['value'] === $value)
             ->values()
             ->toArray();
         $this->rules = $rules;
@@ -153,7 +154,7 @@ class AccessPolicy extends Model
             'app_launcher_visible' => true,
             'policies' => [
                 [
-                    'name' => $this->name . ' Policy',
+                    'name' => $this->name.' Policy',
                     'decision' => 'allow',
                     'include' => $include,
                     'require' => $this->require_mfa ? [['mfa' => true]] : [],

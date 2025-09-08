@@ -49,11 +49,11 @@ class Organisation extends Model
         static::creating(function ($organisation) {
             if (empty($organisation->slug)) {
                 $organisation->slug = Str::slug($organisation->name);
-                
+
                 $count = 1;
                 $originalSlug = $organisation->slug;
                 while (self::where('slug', $organisation->slug)->exists()) {
-                    $organisation->slug = $originalSlug . '-' . $count++;
+                    $organisation->slug = $originalSlug.'-'.$count++;
                 }
             }
         });
@@ -86,12 +86,17 @@ class Organisation extends Model
         return $this->hasMany(AuditLog::class);
     }
 
+    public function notificationSetting()
+    {
+        return $this->hasOne(NotificationSetting::class);
+    }
+
     public function getApiTokenAttribute()
     {
-        if (!$this->encrypted_api_token) {
+        if (! $this->encrypted_api_token) {
             return null;
         }
-        
+
         return decrypt($this->encrypted_api_token);
     }
 
@@ -112,6 +117,7 @@ class Organisation extends Model
     public function getUserRole(User $user): ?string
     {
         $pivot = $this->users()->where('user_id', $user->id)->first();
+
         return $pivot ? $pivot->pivot->role : null;
     }
 
@@ -152,16 +158,15 @@ class Organisation extends Model
     /**
      * Token Management Methods
      */
-    
     public function hasValidToken(): bool
     {
-        return $this->api_token && 
+        return $this->api_token &&
                ($this->token_expires_at === null || $this->token_expires_at->isFuture());
     }
 
     public function isTokenExpiring(?int $daysThreshold = 7): bool
     {
-        return $this->token_expires_at && 
+        return $this->token_expires_at &&
                $this->token_expires_at->isBefore(now()->addDays($daysThreshold));
     }
 
@@ -172,65 +177,65 @@ class Organisation extends Model
 
     public function getTokenExpiresInDays(): ?int
     {
-        if (!$this->token_expires_at) {
+        if (! $this->token_expires_at) {
             return null;
         }
-        
+
         return max(0, now()->diffInDays($this->token_expires_at, false));
     }
 
     public function getTokenStatus(): string
     {
-        if (!$this->api_token) {
+        if (! $this->api_token) {
             return 'missing';
         }
-        
+
         if ($this->isTokenExpired()) {
             return 'expired';
         }
-        
+
         if ($this->isTokenExpiring(7)) {
             return 'expiring';
         }
-        
+
         if ($this->isTokenExpiring(30)) {
             return 'warning';
         }
-        
+
         return 'valid';
     }
 
     public function getTokenStatusBadge(): array
     {
         $status = $this->getTokenStatus();
-        
-        return match($status) {
+
+        return match ($status) {
             'missing' => [
                 'text' => 'No Token',
                 'variant' => 'destructive',
-                'description' => 'API token required for Cloudflare integration'
+                'description' => 'API token required for Cloudflare integration',
             ],
             'expired' => [
                 'text' => 'Expired',
-                'variant' => 'destructive', 
-                'description' => 'Token expired on ' . $this->token_expires_at?->format('M j, Y')
+                'variant' => 'destructive',
+                'description' => 'Token expired on '.$this->token_expires_at?->format('M j, Y'),
             ],
             'expiring' => [
                 'text' => 'Expires Soon',
                 'variant' => 'destructive',
-                'description' => 'Token expires in ' . $this->getTokenExpiresInDays() . ' days'
+                'description' => 'Token expires in '.$this->getTokenExpiresInDays().' days',
             ],
             'warning' => [
                 'text' => 'Expires Soon',
                 'variant' => 'outline',
-                'description' => 'Token expires in ' . $this->getTokenExpiresInDays() . ' days'
+                'description' => 'Token expires in '.$this->getTokenExpiresInDays().' days',
             ],
             default => [
                 'text' => 'Active',
                 'variant' => 'secondary',
-                'description' => $this->token_expires_at ? 
-                    'Expires ' . $this->token_expires_at->format('M j, Y') : 
-                    'Token is active'
+                'description' => $this->token_expires_at ?
+                    'Expires '.$this->token_expires_at->format('M j, Y') :
+                    'Token is active',
             ]
         };
     }
@@ -256,7 +261,7 @@ class Organisation extends Model
         $this->update([
             'token_last_checked' => now(),
             'token_permissions' => $permissions,
-            'token_expires_at' => isset($tokenInfo['expires_on']) ? 
+            'token_expires_at' => isset($tokenInfo['expires_on']) ?
                 \Carbon\Carbon::parse($tokenInfo['expires_on']) : null,
         ]);
     }
@@ -267,27 +272,27 @@ class Organisation extends Model
     public function scopeWithExpiredTokens($query)
     {
         return $query->whereNotNull('token_expires_at')
-                    ->where('token_expires_at', '<', now());
+            ->where('token_expires_at', '<', now());
     }
 
     public function scopeWithExpiringTokens($query, int $daysThreshold = 7)
     {
         return $query->whereNotNull('token_expires_at')
-                    ->where('token_expires_at', '<', now()->addDays($daysThreshold))
-                    ->where('token_expires_at', '>', now());
+            ->where('token_expires_at', '<', now()->addDays($daysThreshold))
+            ->where('token_expires_at', '>', now());
     }
 
     public function scopeWithoutTokens($query)
     {
         return $query->where(function ($q) {
             $q->whereNull('encrypted_api_token')
-              ->orWhere('encrypted_api_token', '');
+                ->orWhere('encrypted_api_token', '');
         });
     }
 
     public function scopeNeedingRenewalNotification($query, int $daysThreshold = 7)
     {
         return $query->withExpiringTokens($daysThreshold)
-                    ->where('token_renewal_notified', false);
+            ->where('token_renewal_notified', false);
     }
 }

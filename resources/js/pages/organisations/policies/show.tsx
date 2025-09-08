@@ -1,12 +1,27 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { type PolicyShowProps } from '@/types/cloudflare';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { ArrowLeft, Globe, Shield, Clock, Users, Mail, Edit, Trash2, RefreshCw, ExternalLink, CheckCircle, XCircle, AlertCircle, Activity } from 'lucide-react';
+import {
+    Activity,
+    AlertCircle,
+    ArrowLeft,
+    CheckCircle,
+    Clock,
+    Edit,
+    ExternalLink,
+    Globe,
+    Mail,
+    RefreshCw,
+    Shield,
+    Trash2,
+    Users,
+    XCircle,
+} from 'lucide-react';
 
 export default function PolicyShow() {
     const { organisation, policy } = usePage<SharedData & PolicyShowProps>().props;
@@ -32,19 +47,27 @@ export default function PolicyShow() {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'active': return 'default';
-            case 'pending': return 'secondary';
-            case 'inactive': return 'destructive';
-            default: return 'secondary';
+            case 'active':
+                return 'default';
+            case 'pending':
+                return 'secondary';
+            case 'inactive':
+                return 'destructive';
+            default:
+                return 'secondary';
         }
     };
 
     const getStatusIcon = (status: string) => {
         switch (status) {
-            case 'active': return <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />;
-            case 'pending': return <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />;
-            case 'inactive': return <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" />;
-            default: return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
+            case 'active':
+                return <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />;
+            case 'pending':
+                return <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />;
+            case 'inactive':
+                return <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" />;
+            default:
+                return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
         }
     };
 
@@ -62,11 +85,11 @@ export default function PolicyShow() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${policy.name} - Protected App`} />
 
-            <div className="max-w-4xl mx-auto space-y-6">
+            <div className="mx-auto max-w-4xl space-y-6">
                 <div className="flex items-center gap-4">
                     <Link href={`/organisations/${organisation.id}`}>
                         <Button variant="ghost" size="sm">
-                            <ArrowLeft className="h-4 w-4 mr-2" />
+                            <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to protected apps
                         </Button>
                     </Link>
@@ -75,7 +98,7 @@ export default function PolicyShow() {
                 {/* Header */}
                 <div className="flex items-start justify-between">
                     <div>
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="mb-2 flex items-center gap-3">
                             <h1 className="text-2xl font-semibold text-foreground">{policy.name}</h1>
                             <Badge variant={getStatusColor(policy.status)} className="flex items-center gap-1">
                                 {getStatusIcon(policy.status)}
@@ -95,24 +118,24 @@ export default function PolicyShow() {
                     <div className="flex items-center gap-2">
                         <Link href={`/organisations/${organisation.id}/policies/${policy.id}/edit`}>
                             <Button>
-                                <Edit className="h-4 w-4 mr-2" />
+                                <Edit className="mr-2 h-4 w-4" />
                                 Edit Policy
                             </Button>
                         </Link>
                         {policy.status === 'pending' && (
                             <Button variant="outline" onClick={handleSync}>
-                                <RefreshCw className="h-4 w-4 mr-2" />
+                                <RefreshCw className="mr-2 h-4 w-4" />
                                 Sync with Cloudflare
                             </Button>
                         )}
                         {policy.status === 'active' && (
                             <Button variant="outline" onClick={handleSync}>
-                                <RefreshCw className="h-4 w-4 mr-2" />
+                                <RefreshCw className="mr-2 h-4 w-4" />
                                 Re-sync Policy
                             </Button>
                         )}
                         <Button variant="destructive" onClick={handleDelete}>
-                            <Trash2 className="h-4 w-4 mr-2" />
+                            <Trash2 className="mr-2 h-4 w-4" />
                             Delete
                         </Button>
                     </div>
@@ -122,15 +145,13 @@ export default function PolicyShow() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Policy Configuration</CardTitle>
-                        <CardDescription>
-                            Details and settings for this access policy.
-                        </CardDescription>
+                        <CardDescription>Details and settings for this access policy.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="grid gap-6 md:grid-cols-2">
                             <div className="space-y-4">
                                 <div>
-                                    <h4 className="text-sm font-medium text-foreground mb-1">Application</h4>
+                                    <h4 className="mb-1 text-sm font-medium text-foreground">Application</h4>
                                     <div className="flex items-center gap-2">
                                         <Globe className="h-4 w-4 text-muted-foreground" />
                                         <span className="text-sm">{policy.domain}</span>
@@ -149,7 +170,7 @@ export default function PolicyShow() {
                                 </div>
 
                                 <div>
-                                    <h4 className="text-sm font-medium text-foreground mb-1">Zone</h4>
+                                    <h4 className="mb-1 text-sm font-medium text-foreground">Zone</h4>
                                     <div className="flex items-center gap-2">
                                         <Shield className="h-4 w-4 text-muted-foreground" />
                                         <span className="text-sm">{policy.zone?.name || 'Unknown Zone'}</span>
@@ -159,7 +180,7 @@ export default function PolicyShow() {
 
                             <div className="space-y-4">
                                 <div>
-                                    <h4 className="text-sm font-medium text-foreground mb-1">Session Duration</h4>
+                                    <h4 className="mb-1 text-sm font-medium text-foreground">Session Duration</h4>
                                     <div className="flex items-center gap-2">
                                         <Clock className="h-4 w-4 text-muted-foreground" />
                                         <span className="text-sm">{policy.session_duration || '24h'}</span>
@@ -167,7 +188,7 @@ export default function PolicyShow() {
                                 </div>
 
                                 <div>
-                                    <h4 className="text-sm font-medium text-foreground mb-1">Access Rules</h4>
+                                    <h4 className="mb-1 text-sm font-medium text-foreground">Access Rules</h4>
                                     <div className="flex items-center gap-2">
                                         <Users className="h-4 w-4 text-muted-foreground" />
                                         <span className="text-sm">{policy.rules?.length || 0} rules configured</span>
@@ -179,7 +200,7 @@ export default function PolicyShow() {
                         <Separator />
 
                         <div>
-                            <h4 className="text-sm font-medium text-foreground mb-3">Security Settings</h4>
+                            <h4 className="mb-3 text-sm font-medium text-foreground">Security Settings</h4>
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2">
                                     <Shield className="h-4 w-4 text-gray-500" />
@@ -197,15 +218,13 @@ export default function PolicyShow() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Access Rules</CardTitle>
-                        <CardDescription>
-                            Users and groups with access to this application.
-                        </CardDescription>
+                        <CardDescription>Users and groups with access to this application.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {policy.rules && policy.rules.length > 0 ? (
                             <div className="space-y-3">
                                 {policy.rules.map((rule, index) => (
-                                    <div key={index} className="flex items-center justify-between bg-muted/20 p-3 rounded-lg">
+                                    <div key={index} className="flex items-center justify-between rounded-lg bg-muted/20 p-3">
                                         <div className="flex items-center gap-2">
                                             {rule.type === 'email' ? (
                                                 <Mail className="h-4 w-4 text-blue-600 dark:text-blue-400" />
@@ -223,13 +242,13 @@ export default function PolicyShow() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-8">
-                                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                                <h3 className="text-lg font-medium text-foreground mb-2">No access rules</h3>
-                                <p className="text-muted-foreground mb-4">This policy has no access rules configured.</p>
+                            <div className="py-8 text-center">
+                                <Users className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                                <h3 className="mb-2 text-lg font-medium text-foreground">No access rules</h3>
+                                <p className="mb-4 text-muted-foreground">This policy has no access rules configured.</p>
                                 <Link href={`/organisations/${organisation.id}/policies/${policy.id}/edit`}>
                                     <Button>
-                                        <Edit className="h-4 w-4 mr-2" />
+                                        <Edit className="mr-2 h-4 w-4" />
                                         Edit Policy
                                     </Button>
                                 </Link>
@@ -242,21 +261,19 @@ export default function PolicyShow() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Policy Information</CardTitle>
-                        <CardDescription>
-                            Creation and modification details.
-                        </CardDescription>
+                        <CardDescription>Creation and modification details.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid gap-4 md:grid-cols-2">
                             <div>
-                                <h4 className="text-sm font-medium text-foreground mb-1">Created</h4>
+                                <h4 className="mb-1 text-sm font-medium text-foreground">Created</h4>
                                 <p className="text-sm text-muted-foreground">
                                     {new Date(policy.created_at).toLocaleString()}
                                     {policy.creator && ` by ${policy.creator.name}`}
                                 </p>
                             </div>
                             <div>
-                                <h4 className="text-sm font-medium text-foreground mb-1">Last Updated</h4>
+                                <h4 className="mb-1 text-sm font-medium text-foreground">Last Updated</h4>
                                 <p className="text-sm text-muted-foreground">
                                     {new Date(policy.updated_at).toLocaleString()}
                                     {policy.updater && ` by ${policy.updater.name}`}
@@ -268,8 +285,8 @@ export default function PolicyShow() {
                             <>
                                 <Separator />
                                 <div>
-                                    <h4 className="text-sm font-medium text-foreground mb-1">Cloudflare Policy ID</h4>
-                                    <p className="text-sm text-muted-foreground font-mono">{policy.cloudflare_policy_id}</p>
+                                    <h4 className="mb-1 text-sm font-medium text-foreground">Cloudflare Policy ID</h4>
+                                    <p className="font-mono text-sm text-muted-foreground">{policy.cloudflare_policy_id}</p>
                                 </div>
                             </>
                         )}
@@ -281,7 +298,7 @@ export default function PolicyShow() {
                     <CardHeader>
                         <CardTitle className="text-sm">Policy Status Guide</CardTitle>
                     </CardHeader>
-                    <CardContent className="text-sm text-muted-foreground space-y-2">
+                    <CardContent className="space-y-2 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
                             <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
                             <span className="font-medium">Active:</span>
@@ -306,25 +323,21 @@ export default function PolicyShow() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle>Recent Activity</CardTitle>
-                                <CardDescription>
-                                    Recent changes and access attempts for this policy.
-                                </CardDescription>
+                                <CardDescription>Recent changes and access attempts for this policy.</CardDescription>
                             </div>
                             <Link href={`/organisations/${organisation.id}/policies/${policy.id}/access-logs`}>
                                 <Button variant="outline" size="sm">
-                                    <Activity className="h-4 w-4 mr-2" />
+                                    <Activity className="mr-2 h-4 w-4" />
                                     View Access Logs
                                 </Button>
                             </Link>
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-center py-8 text-muted-foreground">
-                            <Activity className="h-8 w-8 mx-auto mb-2" />
+                        <div className="py-8 text-center text-muted-foreground">
+                            <Activity className="mx-auto mb-2 h-8 w-8" />
                             <p className="text-sm">Policy activity logs will appear here.</p>
-                            <p className="text-xs mt-1">
-                                Access attempts, rule changes, and sync events are logged automatically.
-                            </p>
+                            <p className="mt-1 text-xs">Access attempts, rule changes, and sync events are logged automatically.</p>
                         </div>
                     </CardContent>
                 </Card>

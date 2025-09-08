@@ -33,27 +33,27 @@ class TokenExpirationNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $urgency = $this->getUrgencyLevel();
-        
-        $subject = match($urgency) {
+
+        $subject = match ($urgency) {
             'critical' => '🚨 Urgent: Cloudflare API Token Expired',
             'high' => '⚠️  Action Required: API Token Expires Today',
             'medium' => '🔔 Reminder: API Token Expires Soon',
             default => '📋 Scheduled: API Token Renewal Needed'
         };
 
-        $greeting = match($urgency) {
+        $greeting = match ($urgency) {
             'critical' => 'URGENT: Your Cloudflare integration has stopped working!',
             'high' => 'ACTION REQUIRED: Your API token expires today!',
             'medium' => 'Your Cloudflare API token expires soon.',
             default => 'Time to renew your Cloudflare API token.'
         };
 
-        $message = new MailMessage();
+        $message = new MailMessage;
         $message->subject($subject)
-                ->greeting("Hi {$notifiable->name}!")
-                ->line($greeting)
-                ->line("**Organization:** {$this->organisation->name}")
-                ->line("**Status:** " . $this->getStatusMessage());
+            ->greeting("Hi {$notifiable->name}!")
+            ->line($greeting)
+            ->line("**Organization:** {$this->organisation->name}")
+            ->line('**Status:** '.$this->getStatusMessage());
 
         if ($this->daysUntilExpiration <= 0) {
             $message->line('🚨 **Your protected applications may be inaccessible until you renew your token.**');
@@ -64,20 +64,20 @@ class TokenExpirationNotification extends Notification implements ShouldQueue
         }
 
         $message->line('')
-                ->line('**What you need to do:**')
-                ->line('1. Go to your organization settings')
-                ->line('2. Click "Renew Token" or "Token Status"') 
-                ->line('3. Follow the guided setup to create a new token')
-                ->line('4. The new token will replace your existing one automatically');
+            ->line('**What you need to do:**')
+            ->line('1. Go to your organization settings')
+            ->line('2. Click "Renew Token" or "Token Status"')
+            ->line('3. Follow the guided setup to create a new token')
+            ->line('4. The new token will replace your existing one automatically');
 
         $message->action('Renew API Token', url("/organisations/{$this->organisation->id}/edit"));
 
         $message->line('')
-                ->line('**Need help?**')
-                ->line('Our guided setup makes token renewal simple - no technical expertise required!')
-                ->line('')
-                ->line('Questions? Just reply to this email.')
-                ->salutation('Best regards, The Security Team');
+            ->line('**Need help?**')
+            ->line('Our guided setup makes token renewal simple - no technical expertise required!')
+            ->line('')
+            ->line('Questions? Just reply to this email.')
+            ->salutation('Best regards, The Security Team');
 
         return $message;
     }

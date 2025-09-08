@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\Settings\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,4 +19,12 @@ Route::middleware([
     Route::get('settings/appearance', function () {
         return Inertia::render('settings/appearance');
     })->name('appearance');
+
+    // Billing routes
+    Route::get('settings/billing', [BillingController::class, 'index'])->name('billing.index');
+    Route::post('billing/subscribe', [BillingController::class, 'subscribe'])->name('billing.subscribe');
+    Route::get('billing/success', [BillingController::class, 'success'])->name('billing.success');
+    Route::post('billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
+    Route::post('billing/resume', [BillingController::class, 'resume'])->name('billing.resume');
+    Route::get('billing/portal', [BillingController::class, 'portal'])->name('billing.portal');
 });

@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Organisation;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-use App\Models\Organisation;
 
 class HandleInertiaRequests extends Middleware
 {

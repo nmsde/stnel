@@ -3,24 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Organisation;
-use App\Services\CloudflareService;
 use App\Services\AuditService;
 use App\Services\CloudflareAccessLogsService;
+use App\Services\CloudflareService;
 use App\Services\CloudflareTokenValidationService;
+use App\Services\SubscriptionService;
+use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
-use Exception;
 
 class OrganisationController extends Controller
 {
     use AuthorizesRequests;
 
     public function __construct(
-        protected AuditService $auditService
+        protected AuditService $auditService,
+        protected SubscriptionService $subscriptionService
     ) {}
 
     /**
@@ -29,7 +31,7 @@ class OrganisationController extends Controller
     public function index(Request $request): Response
     {
         $user = $request->user();
-        
+
         $organisations = Organisation::where('user_id', $user->id)
             ->orWhereHas('users', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
@@ -39,16 +41,36 @@ class OrganisationController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        // Get subscription data
+        $usageStats = $this->subscriptionService->getUserUsageStats($user);
+
         return Inertia::render('organisations/index', [
             'organisations' => $organisations,
+            'subscriptionData' => [
+                'current_plan' => $usageStats['plan'],
+                'organizations_count' => $usageStats['organizations']['current'],
+                'max_organizations' => $usageStats['organizations']['limit'],
+                'endpoints_count' => $usageStats['endpoints']['current'],
+                'max_endpoints' => $usageStats['endpoints']['limit'],
+                'can_create_organization' => $user->canCreateOrganization(),
+                'can_create_endpoint' => $user->canCreateProtectedEndpoint(),
+            ],
         ]);
     }
 
     /**
      * Show the form for creating a new organisation.
      */
-    public function create(): Response
+    public function create(Request $request): Response|RedirectResponse
     {
+        $user = $request->user();
+
+        // Check subscription limits
+        if (! $this->subscriptionService->canUserCreateOrganization($user)) {
+            return to_route('organisations.index')
+                ->with('error', 'You have reached the maximum number of organizations for your plan. Please upgrade to create more organizations.');
+        }
+
         return Inertia::render('organisations/create');
     }
 
@@ -57,6 +79,13 @@ class OrganisationController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Check subscription limits before validation
+        if (! $this->subscriptionService->canUserCreateOrganization($request->user())) {
+            return back()
+                ->withErrors(['subscription' => 'You have reached the maximum number of organizations for your plan. Please upgrade to create more organizations.'])
+                ->withInput();
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
@@ -65,10 +94,10 @@ class OrganisationController extends Controller
         ]);
 
         DB::beginTransaction();
-        
+
         try {
             $apiToken = null;
-            if ($request->has('api_token') && !empty(trim($request->api_token))) {
+            if ($request->has('api_token') && ! empty(trim($request->api_token))) {
                 $apiToken = trim($request->api_token);
             }
 
@@ -83,11 +112,11 @@ class OrganisationController extends Controller
             $organisation->addUser($request->user(), 'admin');
 
             if ($apiToken) {
-                $validationService = new CloudflareTokenValidationService();
+                $validationService = new CloudflareTokenValidationService;
                 $validation = $validationService->checkAndUpdateTokenHealth($organisation);
-                
-                if (!$validation['valid']) {
-                    throw new Exception('Invalid API token: ' . $validation['error']);
+
+                if (! $validation['valid']) {
+                    throw new Exception('Invalid API token: '.$validation['error']);
                 }
 
                 // Sync zones using the CloudflareService
@@ -96,15 +125,15 @@ class OrganisationController extends Controller
             }
 
             $this->auditService->logCreate($organisation, $request->user(), $organisation, 'organisation_created');
-            
+
             DB::commit();
 
             return to_route('organisations.show', $organisation)
                 ->with('status', 'Organisation created successfully.');
-                
+
         } catch (Exception $e) {
             DB::rollBack();
-            
+
             return back()
                 ->withErrors(['api_token' => $e->getMessage()])
                 ->withInput();
@@ -140,7 +169,7 @@ class OrganisationController extends Controller
             if ($organisation->api_token) {
                 $logsService = new CloudflareAccessLogsService($organisation);
                 $result = $logsService->getAccessLogs(['limit' => 10]);
-                
+
                 if ($result['success']) {
                     $recentLogs = $logsService->transformLogs($result['logs']);
                     $stats = $logsService->getLogStats($result['logs']);
@@ -194,7 +223,7 @@ class OrganisationController extends Controller
         ]);
 
         DB::beginTransaction();
-        
+
         try {
             $oldValues = $organisation->getAttributes();
 
@@ -205,11 +234,11 @@ class OrganisationController extends Controller
                 $organisation->save();
 
                 if ($request->filled('api_token')) {
-                    $validationService = new CloudflareTokenValidationService();
+                    $validationService = new CloudflareTokenValidationService;
                     $validation = $validationService->checkAndUpdateTokenHealth($organisation);
-                    
-                    if (!$validation['valid']) {
-                        throw new Exception('Invalid API token: ' . $validation['error']);
+
+                    if (! $validation['valid']) {
+                        throw new Exception('Invalid API token: '.$validation['error']);
                     }
 
                     // Sync zones using the CloudflareService
@@ -219,15 +248,15 @@ class OrganisationController extends Controller
             }
 
             $this->auditService->logUpdate($organisation, $request->user(), $organisation, $oldValues, 'organisation_updated');
-            
+
             DB::commit();
 
             return to_route('organisations.show', $organisation)
                 ->with('status', 'Organisation updated successfully.');
-                
+
         } catch (Exception $e) {
             DB::rollBack();
-            
+
             return back()
                 ->withErrors(['api_token' => $e->getMessage()])
                 ->withInput();
@@ -242,22 +271,22 @@ class OrganisationController extends Controller
         $this->authorize('delete', $organisation);
 
         DB::beginTransaction();
-        
+
         try {
             $this->auditService->logDelete($organisation, $request->user(), $organisation, 'organisation_deleted');
-            
+
             $organisation->delete();
-            
+
             DB::commit();
 
             return to_route('organisations.index')
                 ->with('status', 'Organisation deleted successfully.');
-                
+
         } catch (Exception $e) {
             DB::rollBack();
-            
+
             return back()
-                ->withErrors(['error' => 'Failed to delete organisation: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Failed to delete organisation: '.$e->getMessage()]);
         }
     }
 
@@ -281,7 +310,7 @@ class OrganisationController extends Controller
 
             if ($result['success']) {
                 $cloudflare->syncZones();
-                
+
                 $this->auditService->logTokenValidation($organisation, $request->user(), true);
 
                 return back()->with('status', 'API token validated and zones synced successfully.');
@@ -318,7 +347,7 @@ class OrganisationController extends Controller
 
             return back()->with('status', 'Zones synced successfully.');
         } catch (Exception $e) {
-            return back()->withErrors(['error' => 'Failed to sync zones: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to sync zones: '.$e->getMessage()]);
         }
     }
 
@@ -330,9 +359,9 @@ class OrganisationController extends Controller
         $this->authorize('update', $organisation);
 
         try {
-            $validationService = new CloudflareTokenValidationService();
+            $validationService = new CloudflareTokenValidationService;
             $result = $validationService->checkAndUpdateTokenHealth($organisation);
-            
+
             if ($result['valid']) {
                 $this->auditService->logCustom(
                     $organisation,
@@ -346,7 +375,7 @@ class OrganisationController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Token health checked successfully',
-                    'token_info' => $result
+                    'token_info' => $result,
                 ]);
             } else {
                 $this->auditService->logCustom(
@@ -360,13 +389,13 @@ class OrganisationController extends Controller
 
                 return response()->json([
                     'success' => false,
-                    'error' => $result['error']
+                    'error' => $result['error'],
                 ], 422);
             }
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'error' => 'Failed to check token health: ' . $e->getMessage()
+                'error' => 'Failed to check token health: '.$e->getMessage(),
             ], 500);
         }
     }

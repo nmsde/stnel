@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Organisation;
 use App\Models\AccessPolicy;
+use App\Models\Organisation;
 use App\Services\CloudflareAccessLogsService;
+use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Exception;
 
 class AccessLogsController extends Controller
 {
@@ -33,16 +33,16 @@ class AccessLogsController extends Controller
         ];
 
         // Remove null filters
-        $filters = array_filter($filters, fn($value) => !is_null($value) && $value !== '');
+        $filters = array_filter($filters, fn ($value) => ! is_null($value) && $value !== '');
 
         try {
             $logsService = new CloudflareAccessLogsService($organisation);
             $result = $logsService->getAccessLogs($filters);
-            
+
             if ($result['success']) {
                 $transformedLogs = $logsService->transformLogs($result['logs']);
                 $stats = $logsService->getLogStats($result['logs']);
-                
+
                 return Inertia::render('organisations/access-logs', [
                     'organisation' => $organisation,
                     'logs' => $transformedLogs,
@@ -68,7 +68,7 @@ class AccessLogsController extends Controller
                     'policies' => $organisation->policies()->with('zone:id,name')->get(),
                 ]);
             }
-            
+
         } catch (Exception $e) {
             return Inertia::render('organisations/access-logs', [
                 'organisation' => $organisation,
@@ -94,7 +94,7 @@ class AccessLogsController extends Controller
     public function policy(Request $request, Organisation $organisation, AccessPolicy $policy): Response
     {
         $this->authorize('view', $organisation);
-        
+
         if ($policy->organisation_id !== $organisation->id) {
             abort(404);
         }
@@ -113,16 +113,16 @@ class AccessLogsController extends Controller
         }
 
         // Remove null filters
-        $filters = array_filter($filters, fn($value) => !is_null($value) && $value !== '');
+        $filters = array_filter($filters, fn ($value) => ! is_null($value) && $value !== '');
 
         try {
             $logsService = new CloudflareAccessLogsService($organisation);
             $result = $logsService->getAccessLogs($filters);
-            
+
             if ($result['success']) {
                 $transformedLogs = $logsService->transformLogs($result['logs']);
                 $stats = $logsService->getLogStats($result['logs']);
-                
+
                 return Inertia::render('organisations/policies/access-logs', [
                     'organisation' => $organisation,
                     'policy' => $policy->load('zone'),
@@ -148,7 +148,7 @@ class AccessLogsController extends Controller
                     'filters' => $filters,
                 ]);
             }
-            
+
         } catch (Exception $e) {
             return Inertia::render('organisations/policies/access-logs', [
                 'organisation' => $organisation,

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { appearance } from '@/routes';
+import { index as billing } from '@/routes/billing';
 import { edit } from '@/routes/profile';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
@@ -17,6 +18,11 @@ const sidebarNavItems: NavItem[] = [
     {
         title: 'Appearance',
         href: appearance(),
+        icon: null,
+    },
+    {
+        title: 'Billing',
+        href: billing(),
         icon: null,
     },
 ];

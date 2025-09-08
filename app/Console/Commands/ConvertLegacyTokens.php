@@ -47,41 +47,44 @@ class ConvertLegacyTokens extends Command
             ->where('encrypted_api_token', '!=', '')
             ->where(function ($query) {
                 $query->whereNull('token_expires_at')
-                      ->orWhereNull('token_last_checked')
-                      ->orWhereNull('token_permissions');
+                    ->orWhereNull('token_last_checked')
+                    ->orWhereNull('token_permissions');
             })
             ->get();
 
         if ($legacyOrgs->isEmpty()) {
             $this->info('✅ No legacy tokens found. All tokens are already using the new system.');
+
             return Command::SUCCESS;
         }
 
         $this->info("Found {$legacyOrgs->count()} organization(s) with legacy tokens:");
-        
+
         // Show what we found
         $this->table(['ID', 'Name', 'Last Validated', 'Status'], $legacyOrgs->map(function ($org) {
             return [
                 $org->id,
                 $org->name,
                 $org->token_last_validated_at ? $org->token_last_validated_at->format('Y-m-d H:i') : 'Never',
-                $org->api_token ? 'Has Token' : 'No Token'
+                $org->api_token ? 'Has Token' : 'No Token',
             ];
         }));
 
         if ($dryRun) {
             $this->info('🧪 DRY RUN MODE - No changes will be made');
             $this->info('These organizations would be converted to use the new token system.');
+
             return Command::SUCCESS;
         }
 
-        if (!$force && !$this->confirm('Convert these organizations to the new token system?')) {
+        if (! $force && ! $this->confirm('Convert these organizations to the new token system?')) {
             $this->info('Conversion cancelled.');
+
             return Command::SUCCESS;
         }
 
         $this->info('🔄 Converting legacy tokens...');
-        
+
         $progressBar = $this->output->createProgressBar($legacyOrgs->count());
         $progressBar->start();
 
@@ -93,7 +96,7 @@ class ConvertLegacyTokens extends Command
                 if ($org->api_token) {
                     // Validate the token and populate new fields
                     $result = $this->validationService->checkAndUpdateTokenHealth($org);
-                    
+
                     if ($result['valid']) {
                         $converted++;
                         $this->line("\n✅ Converted: {$org->name}");
@@ -106,12 +109,12 @@ class ConvertLegacyTokens extends Command
                     $this->line("\n⚠️  Skipped: {$org->name} - Token appears corrupted");
                     $failed++;
                 }
-                
+
             } catch (\Exception $e) {
                 $failed++;
-                $this->line("\n❌ Error converting {$org->name}: " . $e->getMessage());
+                $this->line("\n❌ Error converting {$org->name}: ".$e->getMessage());
             }
-            
+
             $progressBar->advance();
         }
 
@@ -119,11 +122,11 @@ class ConvertLegacyTokens extends Command
         $this->newLine(2);
 
         // Summary
-        $this->info("✅ Conversion Complete!");
+        $this->info('✅ Conversion Complete!');
         $this->table(['Result', 'Count'], [
             ['Successfully Converted', $converted],
             ['Failed/Skipped', $failed],
-            ['Total Processed', $legacyOrgs->count()]
+            ['Total Processed', $legacyOrgs->count()],
         ]);
 
         if ($converted > 0) {

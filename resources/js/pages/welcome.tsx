@@ -1,37 +1,40 @@
+import CloudflareAccessManagementDemo from '@/components/cloudflare-access-management-demo';
+import Footer from '@/components/footer';
+import Navigation from '@/components/navigation';
 import { dashboard, login } from '@/routes';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Shield, Lock, Users, Code, ArrowRight, Play, CheckCircle, ExternalLink } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { ArrowRight, Code, GitBranch, Play, Shield, Terminal, Users, Zap } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const useCases = [
     {
         icon: Code,
         title: 'Development Environments',
-        subtitle: 'Keep your staging and dev sites private',
-        description: 'Instantly protect your development environments from public access. Share with your team securely.',
+        subtitle: 'Manage access to your staging and dev sites',
+        description: 'Easily configure Cloudflare Access policies for your development environments. Simple interface for complex access rules.',
         animation: 'dev',
-        features: ['Password or MFA protection', 'Team member access only', 'Instant deployment protection']
+        features: ['Visual policy builder', 'Team access management', 'One-click policy deployment'],
     },
     {
         icon: Users,
         title: 'Client & Freelancer Access',
-        subtitle: 'Controlled access for external collaborators',
-        description: 'Give clients and freelancers temporary access to specific projects without compromising security.',
+        subtitle: 'Streamlined external collaborator management',
+        description: 'Configure temporary access policies for clients and freelancers through an intuitive dashboard interface.',
         animation: 'client',
-        features: ['Time-limited access', 'Project-specific permissions', 'Easy access management']
+        features: ['Time-based access rules', 'Project-specific permissions', 'Access request workflows'],
     },
     {
         icon: Shield,
         title: 'Business Applications',
-        subtitle: 'Secure your internal tools and dashboards',
-        description: 'Protect admin panels, internal tools, and business applications with enterprise-grade security.',
+        subtitle: 'Centralized access policy management',
+        description: 'Manage Cloudflare Access policies for admin panels and internal tools from one unified dashboard.',
         animation: 'business',
-        features: ['Multi-factor authentication', 'Team-based access control', 'Activity monitoring']
+        features: ['Multi-application policies', 'Team-based rule sets', 'Access audit logs'],
     },
 ];
 
-const AnimatedUseCase = ({ useCase, index, isVisible }: { useCase: typeof useCases[0]; index: number; isVisible: boolean }) => {
+const AnimatedUseCase = ({ useCase, index, isVisible }: { useCase: (typeof useCases)[0]; index: number; isVisible: boolean }) => {
     const [animate, setAnimate] = useState(false);
 
     useEffect(() => {
@@ -42,40 +45,32 @@ const AnimatedUseCase = ({ useCase, index, isVisible }: { useCase: typeof useCas
     }, [isVisible, index]);
 
     return (
-        <div className={`transition-all duration-700 ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className={`transition-all duration-700 ${animate ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
             <div className="group relative">
                 {/* Animated background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#FFCD45]/5 to-transparent rounded-3xl transform transition-transform duration-500 group-hover:scale-105" />
-                
+                <div className="absolute inset-0 transform rounded-3xl bg-gradient-to-br from-[#FFCD45]/5 to-transparent transition-transform duration-500 group-hover:scale-105" />
+
                 <div className="relative p-12">
                     {/* Icon with animation */}
                     <div className="relative mb-8">
-                        <div className="w-16 h-16 bg-[#FFCD45] rounded-2xl flex items-center justify-center transform transition-all duration-300 group-hover:rotate-3 group-hover:scale-110">
-                            <useCase.icon className="w-8 h-8 text-[#343434]" />
+                        <div className="flex h-16 w-16 transform items-center justify-center rounded-2xl bg-[#FFCD45] transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                            <useCase.icon className="h-8 w-8 text-[#343434]" />
                         </div>
-                        {animate && (
-                            <div className="absolute inset-0 w-16 h-16 bg-[#FFCD45]/30 rounded-2xl animate-pulse" />
-                        )}
+                        {animate && <div className="absolute inset-0 h-16 w-16 animate-pulse rounded-2xl bg-[#FFCD45]/30" />}
                     </div>
 
-                    <h3 className="text-2xl font-semibold text-[#343434] mb-2">
-                        {useCase.title}
-                    </h3>
-                    <p className="text-lg text-[#FFCD45] font-medium mb-4">
-                        {useCase.subtitle}
-                    </p>
-                    <p className="text-gray-600 leading-relaxed mb-6">
-                        {useCase.description}
-                    </p>
+                    <h3 className="mb-2 text-2xl font-semibold text-[#343434]">{useCase.title}</h3>
+                    <p className="mb-4 text-lg font-medium text-[#FFCD45]">{useCase.subtitle}</p>
+                    <p className="mb-6 leading-relaxed text-gray-600">{useCase.description}</p>
 
                     <div className="space-y-3">
                         {useCase.features.map((feature, idx) => (
-                            <div 
-                                key={idx} 
-                                className={`flex items-center transition-all duration-500 ${animate ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}
-                                style={{ transitionDelay: `${(index * 200) + (idx * 100)}ms` }}
+                            <div
+                                key={idx}
+                                className={`flex items-center transition-all duration-500 ${animate ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'}`}
+                                style={{ transitionDelay: `${index * 200 + idx * 100}ms` }}
                             >
-                                <div className="w-2 h-2 bg-[#FFCD45] rounded-full mr-3 flex-shrink-0" />
+                                <div className="mr-3 h-2 w-2 flex-shrink-0 rounded-full bg-[#FFCD45]" />
                                 <span className="text-gray-700">{feature}</span>
                             </div>
                         ))}
@@ -86,7 +81,6 @@ const AnimatedUseCase = ({ useCase, index, isVisible }: { useCase: typeof useCas
     );
 };
 
-
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
     const [isLoaded, setIsLoaded] = useState(false);
@@ -94,171 +88,121 @@ export default function Welcome() {
 
     useEffect(() => {
         setIsLoaded(true);
-        
+
         // Intersection Observer for scroll animations
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        setVisibleSections(prev => ({
+                        setVisibleSections((prev) => ({
                             ...prev,
-                            [entry.target.id]: true
+                            [entry.target.id]: true,
                         }));
                     }
                 });
             },
-            { threshold: 0.2 }
+            { threshold: 0.2 },
         );
 
         // Observe sections
         const sections = document.querySelectorAll('[data-observe]');
-        sections.forEach(section => observer.observe(section));
+        sections.forEach((section) => observer.observe(section));
 
         return () => observer.disconnect();
     }, []);
 
-
     return (
         <>
-            <Head title="Stnel - Protect Any Endpoint with Cloudflare">
-                <meta name="description" content="Instantly protect your websites, dev environments, and applications with Cloudflare's Zero Trust security. Simple setup, powerful protection." />
-                <meta name="keywords" content="Cloudflare Access, Website Protection, Development Environment Security, Zero Trust, Endpoint Protection" />
-                <meta property="og:title" content="Stnel - Protect Any Endpoint with Cloudflare" />
-                <meta property="og:description" content="Turn any website or application into a protected, secure environment in minutes." />
+            <Head title="Stnel - Easy Cloudflare Access Management">
+                <meta
+                    name="description"
+                    content="Streamline your Cloudflare Access policies with an intuitive dashboard. Manage users, configure rules, and monitor access across all your domains."
+                />
+                <meta
+                    name="keywords"
+                    content="Cloudflare Access Management, Access Policy Dashboard, Zero Trust Management, Cloudflare Interface, Access Control"
+                />
+                <meta property="og:title" content="Stnel - Easy Cloudflare Access Management" />
+                <meta property="og:description" content="The intuitive dashboard for managing your Cloudflare Access policies and users." />
                 <meta property="og:type" content="website" />
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700" rel="stylesheet" />
             </Head>
 
-            <div className="bg-white overflow-hidden">
-                {/* Navigation */}
-                <nav className="relative z-50 bg-white/95 backdrop-blur-md border-b border-gray-100">
-                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                        <div className="flex h-16 items-center justify-between">
-                            <div className="flex items-center">
-                                <Link href="/" className="flex-shrink-0">
-                                    <img className="h-8 w-auto" src="/stnel-logo.svg" alt="Stnel" />
-                                </Link>
-                                <div className="ml-8 hidden md:block">
-                                    <div className="flex items-baseline space-x-8">
-                                        <a href="#use-cases" className="text-gray-600 hover:text-[#343434] px-3 py-2 text-sm font-medium transition-colors">
-                                            Use Cases
-                                        </a>
-                                        <a href="#how-it-works" className="text-gray-600 hover:text-[#343434] px-3 py-2 text-sm font-medium transition-colors">
-                                            How It Works
-                                        </a>
-                                        <a href="#pricing" className="text-gray-600 hover:text-[#343434] px-3 py-2 text-sm font-medium transition-colors">
-                                            Pricing
-                                        </a>
-                                        <Link href="/about" className="text-gray-600 hover:text-[#343434] px-3 py-2 text-sm font-medium transition-colors">
-                                            About
-                                        </Link>
-                                        <Link href="/why-cloudflare" className="text-gray-600 hover:text-[#343434] px-3 py-2 text-sm font-medium transition-colors">
-                                            Why Cloudflare?
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center space-x-4">
-                                {auth.user ? (
-                                    <Link
-                                        href={dashboard()}
-                                        className="inline-flex items-center rounded-xl bg-[#343434] px-6 py-2.5 text-sm font-medium text-white shadow-lg hover:bg-[#2a2a2a] transition-all duration-200 hover:shadow-xl"
-                                    >
-                                        Dashboard
-                                        <ArrowRight className="ml-2 h-4 w-4" />
-                                    </Link>
-                                ) : (
-                                    <>
-                                        <Link
-                                            href={login()}
-                                            className="text-gray-600 hover:text-[#343434] px-4 py-2 text-sm font-medium transition-colors"
-                                        >
-                                            Sign in
-                                        </Link>
-                                        <Link
-                                            href={login()}
-                                            className="inline-flex items-center rounded-xl bg-[#FFCD45] px-6 py-2.5 text-sm font-medium text-[#343434] shadow-lg hover:bg-[#FFD700] transition-all duration-200 hover:shadow-xl transform hover:scale-105"
-                                        >
-                                            Get Started
-                                            <ArrowRight className="ml-2 h-4 w-4" />
-                                        </Link>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </nav>
+            <div className="overflow-hidden bg-white">
+                <Navigation currentPage="home" />
 
                 {/* Hero Section */}
-                <section className="relative pt-24 pb-32 overflow-hidden">
+                <section className="relative overflow-hidden pt-24 pb-32">
                     <div className="absolute inset-0">
                         <div className="absolute inset-0 bg-gradient-to-br from-[#FFCD45]/3 via-white to-[#FFCD45]/1" />
-                        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#FFCD45]/5 rounded-full blur-3xl animate-pulse" />
-                        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#FFCD45]/3 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+                        <div className="absolute top-1/4 left-1/4 h-96 w-96 animate-pulse rounded-full bg-[#FFCD45]/5 blur-3xl" />
+                        <div
+                            className="absolute right-1/4 bottom-1/4 h-96 w-96 animate-pulse rounded-full bg-[#FFCD45]/3 blur-3xl"
+                            style={{ animationDelay: '2s' }}
+                        />
                     </div>
 
                     <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
                         <div className="mx-auto max-w-4xl text-center">
-                            <div className={`transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                                <div className="inline-flex items-center rounded-full bg-[#FFCD45]/10 px-6 py-3 text-sm text-[#343434] mb-8 border border-[#FFCD45]/20">
+                            <div className={`transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+                                <div className="mb-8 inline-flex items-center rounded-full border border-[#FFCD45]/20 bg-[#FFCD45]/10 px-6 py-3 text-sm text-[#343434]">
                                     <Shield className="mr-2 h-4 w-4 text-[#FFCD45]" />
                                     Built for Cloudflare users
                                 </div>
-                                
-                                <h1 className="text-5xl font-bold tracking-tight text-[#343434] sm:text-7xl lg:text-8xl mb-8">
-                                    <span className="block">Protect</span>
-                                    <span className="block text-[#FFCD45]">Any Endpoint</span>
-                                    <span className="block">Instantly</span>
+
+                                <h1 className="mb-8 text-5xl font-bold tracking-tight text-[#343434] sm:text-7xl lg:text-8xl">
+                                    <span className="block">Manage</span>
+                                    <span className="block text-[#FFCD45]">Cloudflare Access</span>
+                                    <span className="block">Effortlessly</span>
                                 </h1>
-                                
-                                <p className="text-xl leading-relaxed text-gray-600 max-w-3xl mx-auto mb-12">
-                                    Turn any website, development environment, or application into a 
-                                    secure, password-protected space in minutes. No complex setup, 
-                                    just simple protection powered by Cloudflare.
+
+                                <p className="mx-auto mb-12 max-w-3xl text-xl leading-relaxed text-gray-600">
+                                    The intuitive dashboard for managing your Cloudflare Access policies. Configure access rules, manage users, and
+                                    monitor activity across all your Cloudflare-protected domains from one unified interface.
                                 </p>
-                                
-                                <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
+
+                                <div className="mb-12 flex flex-col items-center justify-center gap-6 sm:flex-row">
                                     <Link
                                         href={auth.user ? dashboard() : login()}
-                                        className="group inline-flex items-center rounded-3xl bg-[#FFCD45] px-10 py-5 text-lg font-semibold text-[#343434] hover:bg-[#FFCD45]/90 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
+                                        className="group inline-flex transform items-center rounded-2xl bg-[#FFCD45] px-6 py-3 text-base font-semibold text-[#343434] shadow-lg transition-all duration-200 hover:scale-105 hover:bg-[#FFD700] hover:shadow-xl"
                                     >
-                                        {auth.user ? 'Go to Dashboard' : 'Start Protecting Now'}
-                                        <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                                        {auth.user ? 'Go to Dashboard' : 'Start Managing Access'}
+                                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                                     </Link>
-                                    
-                                    <button className="group inline-flex items-center text-[#343434]/70 hover:text-[#343434] font-medium">
+
+                                    <button className="group inline-flex items-center font-medium text-[#343434]/70 hover:text-[#343434]">
                                         <Play className="mr-2 h-5 w-5 text-[#FFCD45]" />
                                         See how it works
                                     </button>
                                 </div>
-                                
+
                                 <div className="text-sm text-gray-500">
-                                    Free forever • 1 organization + 5 protected endpoints • No credit card required
+                                    Free forever • 1 organization + 5 managed policies • No credit card required
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
+                <CloudflareAccessManagementDemo visibleSections={visibleSections} />
+
                 {/* Use Cases Section */}
-                <section id="use-cases" className="py-32 bg-gradient-to-b from-white to-[#FFCD45]/3" data-observe>
+                <section id="use-cases" className="bg-gradient-to-b from-white to-[#FFCD45]/3 py-32" data-observe>
                     <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                        <div className="mx-auto max-w-3xl text-center mb-20">
-                            <h2 className="text-4xl font-bold text-[#343434] mb-6">
-                                Built for Real Scenarios
-                            </h2>
-                            <p className="text-xl text-gray-600 leading-relaxed">
-                                Whether you're protecting development environments, managing client access, 
-                                or securing business applications, Stnel adapts to your needs.
+                        <div className="mx-auto mb-20 max-w-3xl text-center">
+                            <h2 className="mb-6 text-4xl font-bold text-[#343434]">Built for Real Management Needs</h2>
+                            <p className="text-xl leading-relaxed text-gray-600">
+                                Whether you're managing development access, configuring client permissions, or organizing business application
+                                policies, Stnel simplifies your Cloudflare Access workflow.
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                             {useCases.map((useCase, index) => (
-                                <AnimatedUseCase 
-                                    key={useCase.title} 
-                                    useCase={useCase} 
+                                <AnimatedUseCase
+                                    key={useCase.title}
+                                    useCase={useCase}
                                     index={index}
                                     isVisible={visibleSections['use-cases'] || false}
                                 />
@@ -267,278 +211,90 @@ export default function Welcome() {
                     </div>
                 </section>
 
-                {/* How It Works Section */}
-                <section id="how-it-works" className="py-32 bg-white relative" data-observe>
+                {/* CI/CD CLI Tool Section - Coming Soon */}
+                <section className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white py-20">
                     <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                        <div className="mx-auto max-w-3xl text-center mb-20">
-                            <h2 className="text-4xl font-bold text-[#343434] mb-6">
-                                From Exposed to Protected
-                            </h2>
-                            <p className="text-xl text-gray-600">
-                                Watch how Stnel protects your development sites from accidental access
+                        {/* Coming Soon Badge */}
+                        <div className="mb-8 flex justify-center">
+                            <div className="inline-flex items-center rounded-full bg-[#F38020]/10 px-4 py-2">
+                                <Zap className="mr-2 h-4 w-4 text-[#F38020]" />
+                                <span className="text-sm font-semibold text-[#F38020]">COMING SOON</span>
+                            </div>
+                        </div>
+
+                        <div className="mb-16 text-center">
+                            <h2 className="mb-4 text-4xl font-bold text-[#343434]">Deploy with Confidence</h2>
+                            <p className="mx-auto max-w-3xl text-xl text-gray-600">
+                                Integrate Cloudflare Access policies directly into your CI/CD pipeline. Configure protection rules alongside your code
+                                deployments.
                             </p>
                         </div>
 
-                        {/* Story Animation */}
-                        <div className="max-w-5xl mx-auto">
-                            {/* Step 1: Unprotected Access */}
-                            <div className={`mb-16 transition-all duration-1000 ${visibleSections['how-it-works'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                                <div className="text-center mb-8">
-                                    <div className="inline-flex items-center bg-gray-100 px-6 py-3 rounded-full text-[#343434] font-semibold mb-6">
-                                        Problem: Accidental Discovery
-                                    </div>
-                                    <h3 className="text-2xl font-semibold text-[#343434] mb-2">Someone finds your staging site</h3>
-                                    <p className="text-gray-600">A user accidentally discovers your development URL</p>
-                                </div>
-                                
-                                <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200">
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                                        {/* User */}
-                                        <div className="text-center">
-                                            <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-                                                <Users className="w-8 h-8 text-gray-500" />
-                                            </div>
-                                            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                                                <div className="text-sm text-gray-500 mb-2">Random User</div>
-                                                <div className="font-medium text-[#343434]">"I wonder if staging.coolapp.com exists?"</div>
-                                            </div>
+                        <div className="mx-auto max-w-5xl">
+                            <div className="relative rounded-3xl bg-gradient-to-br from-[#343434] to-[#1a1a1a] p-12 shadow-2xl">
+                                {/* Terminal Window */}
+                                <div className="overflow-hidden rounded-xl bg-black/90">
+                                    {/* Terminal Header */}
+                                    <div className="flex items-center gap-2 bg-gray-800 px-4 py-2">
+                                        <div className="flex gap-2">
+                                            <div className="h-3 w-3 rounded-full bg-red-500"></div>
+                                            <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
+                                            <div className="h-3 w-3 rounded-full bg-green-500"></div>
                                         </div>
+                                        <div className="flex-1 text-center">
+                                            <span className="font-mono text-sm text-gray-400">stnel-cli</span>
+                                        </div>
+                                    </div>
 
-                                        {/* Browser/Site */}
-                                        <div>
-                                            <div className="bg-white rounded-2xl border border-gray-200 shadow-lg">
-                                                <div className="flex items-center justify-between px-4 py-3 bg-gray-50 rounded-t-2xl border-b border-gray-100">
-                                                    <div className="flex space-x-2">
-                                                        <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
-                                                        <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
-                                                        <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
-                                                    </div>
-                                                    <div className="text-sm text-gray-600 font-mono">staging.coolapp.com</div>
-                                                    <div className="w-16"></div>
-                                                </div>
-                                                <div className="p-6">
-                                                    {/* Website Layout Mock */}
-                                                    <div className="bg-gray-100 rounded-lg p-4 mb-4">
-                                                        <div className="flex items-center justify-between mb-3">
-                                                            <div className="flex space-x-2">
-                                                                <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                                                                <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                                                                <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                                                            </div>
-                                                            <div className="text-xs text-gray-500">CoolApp</div>
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            <div className="h-2 bg-gray-300 rounded w-3/4"></div>
-                                                            <div className="h-2 bg-gray-300 rounded w-1/2"></div>
-                                                            <div className="h-2 bg-gray-300 rounded w-2/3"></div>
-                                                        </div>
-                                                        <div className="mt-4 text-center">
-                                                            <div className="inline-flex items-center bg-[#FFCD45] px-3 py-1 rounded-full">
-                                                                <div className="text-xs font-medium text-[#343434]">Under Development</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div className="text-center">
-                                                        <h4 className="font-semibold text-[#343434] mb-3">Full Access Granted</h4>
-                                                        <p className="text-gray-600 mb-4 leading-relaxed text-sm">Complete access to your development environment, database, and sensitive data</p>
-                                                        <div className="bg-gray-100 text-[#343434] px-4 py-2 rounded-xl text-xs font-medium">
-                                                            API Keys • Database • Source Code Exposed
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                    {/* Terminal Content */}
+                                    <div className="p-6 font-mono text-sm">
+                                        <div className="mb-2 text-gray-400">$ npm install -g @stnel/cli</div>
+                                        <div className="mb-4 text-gray-400">$ stnel init</div>
+
+                                        <div className="mb-2 text-green-400"># Deploy protection policies with your code</div>
+                                        <div className="mb-2 text-white">$ stnel deploy --env staging</div>
+
+                                        <div className="mt-4 space-y-1">
+                                            <div className="text-gray-500">Applying Cloudflare Access policies...</div>
+                                            <div className="text-yellow-400">→ Configuring staging.awesomeapp.com</div>
+                                            <div className="text-yellow-400">→ Setting up authentication rules</div>
+                                            <div className="text-yellow-400">→ Applying team access permissions</div>
+                                            <div className="text-green-400">✓ Protection deployed successfully!</div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Transformation Arrow */}
-                            <div className={`flex justify-center mb-16 transition-all duration-1000 delay-1000 ${visibleSections['how-it-works'] ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
-                                <div className="relative">
-                                    {/* Animated Shield Rings */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="w-32 h-32 border-2 border-[#FFCD45]/30 rounded-full animate-ping"></div>
-                                    </div>
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="w-24 h-24 border-2 border-[#FFCD45]/50 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-                                    </div>
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="w-40 h-40 border border-[#FFCD45]/20 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-                                    </div>
-                                    
-                                    {/* Central Protection Core */}
-                                    <div className="relative rounded-3xl p-8 px-16 shadow-2xl border-4 border-[#FFCD45]/30">
-                                        {/* Shield Icon Background */}
-                                        <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                                            <Shield className="w-20 h-20 text-[#343434]" />
-                                        </div>
-                                        
-                                        <div className="relative text-center">
-                                            <img className="h-8 w-auto mx-auto mb-2 drop-shadow-sm" src="/stnel-logo.svg" alt="Stnel" />
-                                            <div className="text-[#343434] font-bold text-sm">ACTIVATED</div>
-                                        </div>
-                                        
-                                        {/* Scanning Line Effect */}
-                                        <div className="absolute inset-0 overflow-hidden rounded-3xl">
-                                            <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse transform -translate-y-4" style={{ 
-                                                animation: 'scan 2s ease-in-out infinite',
-                                                animationDelay: '1.5s'
-                                            }}></div>
-                                        </div>
-                                    </div>
-                                    
-                                    {/* Protective Barrier Indicators */}
-                                    <div className="absolute -top-2 -left-2 w-4 h-4 bg-[#FFCD45] rounded-full animate-pulse"></div>
-                                    <div className="absolute -top-2 -right-2 w-4 h-4 bg-[#FFCD45] rounded-full animate-pulse" style={{ animationDelay: '0.3s' }}></div>
-                                    <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-[#FFCD45] rounded-full animate-pulse" style={{ animationDelay: '0.6s' }}></div>
-                                    <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-[#FFCD45] rounded-full animate-pulse" style={{ animationDelay: '0.9s' }}></div>
-                                </div>
-                            </div>
-                            
-                            {/* Add custom CSS for scanning effect */}
-                            <style jsx>{`
-                                @keyframes scan {
-                                    0% { top: -10%; opacity: 0; }
-                                    10% { opacity: 1; }
-                                    90% { opacity: 1; }
-                                    100% { top: 110%; opacity: 0; }
-                                }
-                            `}</style>
-
-                            {/* Step 2: Protected Access Flow */}
-                            <div className={`transition-all duration-1000 delay-1500 ${visibleSections['how-it-works'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                                <div className="text-center mb-8">
-                                    <div className="inline-flex items-center bg-[#FFCD45]/10 px-6 py-3 rounded-full text-[#343434] font-semibold mb-6">
-                                        Solution: Stnel Protected
-                                    </div>
-                                    <h3 className="text-2xl font-semibold text-[#343434] mb-2">Now the same user tries to access</h3>
-                                    <p className="text-gray-600">Cloudflare Access challenges unauthorized visitors</p>
-                                </div>
-
-                                <div className="space-y-12">
-                                    {/* Access Challenge */}
-                                    <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200">
-                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                                            {/* User */}
-                                            <div className="text-center">
-                                                <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-                                                    <Users className="w-8 h-8 text-gray-500" />
-                                                </div>
-                                                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                                                    <div className="text-sm text-gray-500 mb-2">Same Random User</div>
-                                                    <div className="font-medium text-[#343434]">"Hmm, it's asking for verification..."</div>
-                                                </div>
-                                            </div>
-
-                                            {/* Access Challenge Screen */}
-                                            <div>
-                                                <div className="bg-white rounded-2xl border border-gray-200 shadow-lg">
-                                                    <div className="flex items-center justify-between px-4 py-3 bg-gray-50 rounded-t-2xl border-b border-gray-100">
-                                                        <div className="flex space-x-2">
-                                                            <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
-                                                            <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
-                                                            <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
-                                                        </div>
-                                                        <div className="text-sm text-gray-600 font-mono">staging.coolapp.com</div>
-                                                        <div className="w-16"></div>
-                                                    </div>
-                                                    <div className="p-8">
-                                                        <div className="text-center">
-                                                            <div className="w-16 h-16 bg-[#FFCD45]/10 rounded-2xl mx-auto mb-6 flex items-center justify-center">
-                                                                <Shield className="w-8 h-8 text-[#FFCD45]" />
-                                                            </div>
-                                                            <h4 className="font-semibold text-[#343434] mb-6">Access Verification Required</h4>
-                                                            <div className="space-y-4 max-w-sm mx-auto">
-                                                                <div className="bg-gray-50 rounded-xl p-4">
-                                                                    <input type="email" placeholder="Enter your email" className="w-full bg-transparent text-sm text-gray-600" disabled />
-                                                                </div>
-                                                                <button className="w-full bg-[#FFCD45] text-[#343434] py-3 rounded-xl font-medium text-sm hover:bg-[#FFD700] transition-colors">
-                                                                    Send Verification Code
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                {/* Feature Grid */}
+                                <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+                                    <div className="rounded-xl bg-white/10 p-6 backdrop-blur">
+                                        <Terminal className="mb-3 h-8 w-8 text-[#FFCD45]" />
+                                        <h3 className="mb-2 font-semibold text-white">CLI Integration</h3>
+                                        <p className="text-sm text-gray-300">Simple commands to manage access policies from your terminal</p>
                                     </div>
 
-                                    {/* Authorized Access */}
-                                    <div className={`bg-[#FFCD45]/5 rounded-3xl p-8 border border-[#FFCD45]/20 transition-all duration-1000 delay-2500 ${visibleSections['how-it-works'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                                            {/* Authorized User */}
-                                            <div className="text-center">
-                                                <div className="w-20 h-20 bg-[#FFCD45] rounded-full mx-auto mb-4 flex items-center justify-center">
-                                                    <Users className="w-10 h-10 text-[#343434]" />
-                                                </div>
-                                                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                                                    <div className="text-sm text-[#FFCD45] mb-2 font-medium">Authorized User</div>
-                                                    <div className="font-medium text-[#343434]">"Let me check the staging site"</div>
-                                                </div>
-                                            </div>
+                                    <div className="rounded-xl bg-white/10 p-6 backdrop-blur">
+                                        <GitBranch className="mb-3 h-8 w-8 text-[#FFCD45]" />
+                                        <h3 className="mb-2 font-semibold text-white">Version Control</h3>
+                                        <p className="text-sm text-gray-300">Store access policies as code in your repository</p>
+                                    </div>
 
-                                            {/* Successful Access */}
-                                            <div>
-                                                <div className="bg-white rounded-2xl border border-gray-200 shadow-lg">
-                                                    <div className="flex items-center justify-between px-4 py-3 bg-[#FFCD45]/10 rounded-t-2xl border-b border-gray-100">
-                                                        <div className="flex space-x-2">
-                                                            <div className="w-3 h-3 bg-[#FFCD45] rounded-full"></div>
-                                                            <div className="w-3 h-3 bg-[#FFCD45] rounded-full"></div>
-                                                            <div className="w-3 h-3 bg-[#FFCD45] rounded-full"></div>
-                                                        </div>
-                                                        <div className="text-sm text-gray-600 font-mono">staging.coolapp.com</div>
-                                                        <div className="w-16"></div>
-                                                    </div>
-                                                    <div className="p-8">
-                                                        <div className="text-center">
-                                                            <div className="w-12 h-12 bg-[#FFCD45]/20 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                                                                <CheckCircle className="w-6 h-6 text-[#FFCD45]" />
-                                                            </div>
-                                                            <h4 className="font-semibold text-[#343434] mb-3">Access Granted</h4>
-                                                            <p className="text-gray-600 mb-4 leading-relaxed">Authorized team member verified via email</p>
-                                                            <div className="bg-[#FFCD45]/10 text-[#343434] px-4 py-2 rounded-xl text-sm font-medium border border-[#FFCD45]/20">
-                                                                Secure Access • Activity Logged • Time Limited
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div className="rounded-xl bg-white/10 p-6 backdrop-blur">
+                                        <Zap className="mb-3 h-8 w-8 text-[#FFCD45]" />
+                                        <h3 className="mb-2 font-semibold text-white">Auto Deploy</h3>
+                                        <p className="text-sm text-gray-300">Automatically apply policies on every deployment</p>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Summary */}
-                            <div className={`text-center mt-20 transition-all duration-1000 delay-3000 ${visibleSections['how-it-works'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                                <div className="">
-                                    <h3 className="text-3xl font-bold text-[#343434] mb-6">That's the power of Stnel</h3>
-                                    <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                                        Transform any website into a secure, protected environment where only authorized users can access your sensitive development work.
-                                    </p>
-                                    
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-                                        <div>
-                                            <div className="text-3xl font-bold text-[#FFCD45] mb-2">5min</div>
-                                            <div className="text-sm text-gray-600">Setup time</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-3xl font-bold text-[#FFCD45] mb-2">Email + SMS</div>
-                                            <div className="text-sm text-gray-600">Multi-factor authentication</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-3xl font-bold text-[#FFCD45] mb-2">100%</div>
-                                            <div className="text-sm text-gray-600">Protection coverage</div>
-                                        </div>
-                                    </div>
-
-                                    <Link
-                                        href={auth.user ? dashboard() : login()}
-                                        className="group inline-flex items-center rounded-2xl bg-[#FFCD45] px-8 py-4 text-lg font-semibold text-[#343434] hover:bg-[#FFD700] transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                                {/* Early Access CTA */}
+                                <div className="mt-8 text-center">
+                                    <p className="mb-4 text-gray-300">Want early access to the CLI tool?</p>
+                                    <a
+                                        href="mailto:hello@stnel.com?subject=CLI%20Early%20Access"
+                                        className="inline-flex items-center rounded-2xl bg-[#FFCD45] px-6 py-3 font-semibold text-[#343434] transition-all duration-200 hover:bg-[#FFD700]"
                                     >
-                                        Protect Your Sites Now
-                                        <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                                    </Link>
+                                        Join the Waitlist
+                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -546,38 +302,37 @@ export default function Welcome() {
                 </section>
 
                 {/* Cloudflare Focus Section */}
-                <section className="py-32 bg-gradient-to-b from-[#FFCD45]/3 to-white">
+                <section className="bg-gradient-to-b from-[#FFCD45]/3 to-white py-32">
                     <div className="mx-auto max-w-7xl px-6 lg:px-8">
                         <div className="mx-auto max-w-4xl text-center">
-                            <h2 className="text-4xl font-bold text-[#343434] mb-6">
-                                Made for Cloudflare Users
-                            </h2>
-                            <p className="text-xl text-gray-600 leading-relaxed mb-12">
-                                If you're already using Cloudflare for DNS, CDN, or other services, 
-                                Stnel seamlessly integrates with your existing setup to add powerful 
-                                access control to any endpoint.
+                            <h2 className="mb-6 text-4xl font-bold text-[#343434]">Made for Cloudflare Users</h2>
+                            <p className="mb-12 text-xl leading-relaxed text-gray-600">
+                                If you're already using Cloudflare for DNS, CDN, or other services, Stnel seamlessly integrates with your existing
+                                setup to add powerful access control to any endpoint.
                             </p>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                                <div className="bg-white rounded-3xl p-8 shadow-sm border border-[#FFCD45]/10">
-                                    <h3 className="text-xl font-semibold text-[#343434] mb-4">Already using Cloudflare?</h3>
-                                    <p className="text-gray-600 mb-6">Perfect! You can start protecting endpoints in minutes.</p>
+                            <div className="mb-12 grid grid-cols-1 gap-8 md:grid-cols-2">
+                                <div className="rounded-3xl border border-[#FFCD45]/10 bg-white p-8 shadow-sm">
+                                    <h3 className="mb-4 text-xl font-semibold text-[#343434]">Already using Cloudflare?</h3>
+                                    <p className="mb-6 text-gray-600">Perfect! You can start protecting endpoints in minutes.</p>
                                     <Link
                                         href={auth.user ? dashboard() : login()}
-                                        className="inline-flex items-center text-[#FFCD45] font-semibold hover:text-[#FFCD45]/80 transition-colors"
+                                        className="inline-flex items-center font-semibold text-[#FFCD45] transition-colors hover:text-[#FFCD45]/80"
                                     >
                                         Get started now <ArrowRight className="ml-2 h-4 w-4" />
                                     </Link>
                                 </div>
 
-                                <div className="bg-white rounded-3xl p-8 shadow-sm border border-[#FFCD45]/10">
-                                    <h3 className="text-xl font-semibold text-[#343434] mb-4">New to Cloudflare?</h3>
-                                    <p className="text-gray-600 mb-6">Learn why millions of websites trust Cloudflare for security and performance.</p>
+                                <div className="rounded-3xl border border-[#FFCD45]/10 bg-white p-8 shadow-sm">
+                                    <h3 className="mb-4 text-xl font-semibold text-[#343434]">New to Cloudflare?</h3>
+                                    <p className="mb-6 text-gray-600">
+                                        Learn why millions of websites trust Cloudflare for security and performance.
+                                    </p>
                                     <Link
                                         href="/why-cloudflare"
-                                        className="inline-flex items-center text-[#FFCD45] font-semibold hover:text-[#FFCD45]/80 transition-colors"
+                                        className="inline-flex items-center font-semibold text-[#FFCD45] transition-colors hover:text-[#FFCD45]/80"
                                     >
-                                        Why Cloudflare? <ExternalLink className="ml-2 h-4 w-4" />
+                                        Why Cloudflare? <ArrowRight className="ml-2 h-4 w-4" />
                                     </Link>
                                 </div>
                             </div>
@@ -586,92 +341,87 @@ export default function Welcome() {
                 </section>
 
                 {/* Pricing Section */}
-                <section id="pricing" className="py-32 bg-white" data-observe>
+                <section id="pricing" className="bg-white pt-8 pb-32" data-observe>
                     <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                        <div className="mx-auto max-w-3xl text-center mb-20">
-                            <h2 className="text-4xl font-bold text-[#343434] mb-6">
-                                Simple, Honest Pricing
-                            </h2>
-                            <p className="text-xl text-gray-600">
-                                Start free, upgrade when you need more
-                            </p>
+                        <div className="mx-auto mb-20 max-w-3xl text-center">
+                            <h2 className="mb-6 text-4xl font-bold text-[#343434]">Simple, Honest Pricing</h2>
+                            <p className="text-xl text-gray-600">Start free, upgrade when you need more</p>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 lg:grid-cols-2">
                             {/* Free Plan */}
-                            <div className="bg-white rounded-3xl p-10 shadow-sm border-2 border-[#FFCD45]/20 relative overflow-hidden">
+                            <div className="relative overflow-hidden rounded-3xl border-2 border-[#FFCD45]/20 bg-white p-10 shadow-sm">
                                 <div className="absolute inset-0 bg-gradient-to-br from-[#FFCD45]/5 to-transparent" />
                                 <div className="relative">
-                                    <h3 className="text-2xl font-bold text-[#343434] mb-2">Free</h3>
-                                    <p className="text-gray-600 mb-6">Perfect for getting started</p>
+                                    <h3 className="mb-2 text-2xl font-bold text-[#343434]">Free</h3>
+                                    <p className="mb-6 text-gray-600">Perfect for getting started</p>
                                     <div className="mb-8">
                                         <span className="text-5xl font-bold text-[#343434]">$0</span>
-                                        <span className="text-gray-600 ml-2">forever</span>
+                                        <span className="ml-2 text-gray-600">forever</span>
                                     </div>
-                                    
-                                    <div className="space-y-4 mb-8">
+
+                                    <div className="mb-8 space-y-4">
                                         <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-[#FFCD45] rounded-full mr-4" />
+                                            <div className="mr-4 h-2 w-2 rounded-full bg-[#FFCD45]" />
                                             <span className="text-gray-700">1 Organization</span>
                                         </div>
                                         <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-[#FFCD45] rounded-full mr-4" />
+                                            <div className="mr-4 h-2 w-2 rounded-full bg-[#FFCD45]" />
                                             <span className="text-gray-700">5 Protected Endpoints</span>
                                         </div>
                                         <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-[#FFCD45] rounded-full mr-4" />
+                                            <div className="mr-4 h-2 w-2 rounded-full bg-[#FFCD45]" />
                                             <span className="text-gray-700">Basic Access Control</span>
                                         </div>
                                         <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-[#FFCD45] rounded-full mr-4" />
+                                            <div className="mr-4 h-2 w-2 rounded-full bg-[#FFCD45]" />
                                             <span className="text-gray-700">Activity Monitoring</span>
                                         </div>
                                     </div>
 
                                     <Link
-                                        href={login()}
-                                        className="w-full inline-flex justify-center items-center rounded-2xl border-2 border-[#FFCD45] px-8 py-4 text-sm font-semibold text-[#FFCD45] hover:bg-[#FFCD45] hover:text-[#343434] transition-all"
+                                        href={auth.user ? dashboard() : login()}
+                                        className="inline-flex w-full items-center justify-center rounded-xl border-2 border-[#FFCD45] px-6 py-3 text-sm font-semibold text-[#FFCD45] transition-all hover:bg-[#FFCD45] hover:text-[#343434]"
                                     >
-                                        Start Free
+                                        {auth.user ? 'Go to Dashboard' : 'Start Free'}
                                     </Link>
                                 </div>
                             </div>
 
                             {/* Pro Plan */}
-                            <div className="relative bg-[#343434] rounded-3xl p-10 shadow-xl overflow-hidden">
-                                
+                            <div className="relative overflow-hidden rounded-3xl bg-[#343434] p-10 shadow-xl">
                                 <div className="relative">
-                                    <h3 className="text-2xl font-bold text-white mb-2">Pro</h3>
-                                    <p className="text-gray-300 mb-6">For growing teams</p>
+                                    <h3 className="mb-2 text-2xl font-bold text-white">Pro</h3>
+                                    <p className="mb-6 text-gray-300">For growing teams</p>
                                     <div className="mb-8">
                                         <span className="text-5xl font-bold text-white">$15</span>
-                                        <span className="text-gray-300 ml-2">/month</span>
+                                        <span className="ml-2 text-gray-300">/month</span>
                                     </div>
-                                    
-                                    <div className="space-y-4 mb-8">
+
+                                    <div className="mb-8 space-y-4">
                                         <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-[#FFCD45] rounded-full mr-4" />
+                                            <div className="mr-4 h-2 w-2 rounded-full bg-[#FFCD45]" />
                                             <span className="text-gray-100">Unlimited Organizations</span>
                                         </div>
                                         <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-[#FFCD45] rounded-full mr-4" />
+                                            <div className="mr-4 h-2 w-2 rounded-full bg-[#FFCD45]" />
                                             <span className="text-gray-100">Unlimited Protected Endpoints</span>
                                         </div>
                                         <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-[#FFCD45] rounded-full mr-4" />
+                                            <div className="mr-4 h-2 w-2 rounded-full bg-[#FFCD45]" />
                                             <span className="text-gray-100">Advanced Access Management</span>
                                         </div>
                                         <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-[#FFCD45] rounded-full mr-4" />
+                                            <div className="mr-4 h-2 w-2 rounded-full bg-[#FFCD45]" />
                                             <span className="text-gray-100">Email Notifications</span>
                                         </div>
                                     </div>
 
                                     <Link
-                                        href={login()}
-                                        className="w-full inline-flex justify-center items-center rounded-2xl bg-[#FFCD45] px-8 py-4 text-sm font-semibold text-[#343434] hover:bg-[#FFCD45]/90 transition-all"
+                                        href={auth.user ? '/settings/billing' : `${login().url}?intent=subscribe`}
+                                        className="inline-flex w-full items-center justify-center rounded-xl bg-[#FFCD45] px-6 py-3 text-sm font-semibold text-[#343434] transition-all hover:bg-[#FFCD45]/90"
                                     >
-                                        Start Pro Trial
+                                        {auth.user ? 'Upgrade to Pro' : 'Start Pro Trial'}
                                     </Link>
                                 </div>
                             </div>
@@ -680,79 +430,27 @@ export default function Welcome() {
                 </section>
 
                 {/* CTA Section */}
-                <section className="py-32 bg-gradient-to-br from-[#FFCD45] to-[#FFCD45]/80">
+                <section className="bg-gradient-to-br from-[#FFCD45] to-[#FFCD45]/80 py-32">
                     <div className="mx-auto max-w-7xl px-6 lg:px-8">
                         <div className="mx-auto max-w-3xl text-center">
-                            <h2 className="text-4xl font-bold text-[#343434] mb-6">
-                                Ready to Protect Your Endpoints?
-                            </h2>
-                            <p className="text-xl text-[#343434]/80 mb-10">
-                                Join developers and teams who trust Stnel to secure their applications.
+                            <h2 className="mb-6 text-4xl font-bold text-[#343434]">Ready to Simplify Access Management?</h2>
+                            <p className="mb-10 text-xl text-[#343434]/80">
+                                Join developers and teams who use Stnel to streamline their Cloudflare Access workflows.
                             </p>
                             <div className="flex items-center justify-center">
                                 <Link
                                     href={auth.user ? dashboard() : login()}
-                                    className="group inline-flex items-center rounded-3xl bg-[#343434] px-12 py-6 text-lg font-semibold text-white hover:bg-[#343434]/90 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
+                                    className="group inline-flex transform items-center rounded-3xl bg-[#343434] px-12 py-6 text-lg font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-[#343434]/90 hover:shadow-2xl"
                                 >
                                     {auth.user ? 'Go to Dashboard' : 'Start Free Now'}
-                                    <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                                    <ArrowRight className="ml-3 h-5 w-5 transition-transform group-hover:translate-x-1" />
                                 </Link>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* Footer */}
-                <footer className="bg-white border-t border-gray-200">
-                    <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-                            {/* Brand Column */}
-                            <div className="md:col-span-2">
-                                <div className="flex items-center mb-4">
-                                    <img className="h-8 w-auto" src="/stnel-logo.svg" alt="Stnel" />
-                                </div>
-                                <p className="text-gray-600 max-w-md mb-6">
-                                    Simple endpoint protection powered by Cloudflare's global network. 
-                                    Secure your applications in minutes, not hours.
-                                </p>
-                                <div className="flex items-center space-x-4">
-                                    <a href="mailto:hello@stnel.com" className="text-[#FFCD45] hover:text-[#FFD700] font-medium transition-colors">
-                                        hello@stnel.com
-                                    </a>
-                                </div>
-                            </div>
-
-                            {/* Navigation Column */}
-                            <div>
-                                <h3 className="text-[#343434] font-semibold mb-4">Navigation</h3>
-                                <ul className="space-y-3 text-sm">
-                                    <li><a href="#use-cases" className="text-gray-600 hover:text-[#343434] transition-colors">Use Cases</a></li>
-                                    <li><a href="#how-it-works" className="text-gray-600 hover:text-[#343434] transition-colors">How It Works</a></li>
-                                    <li><a href="#pricing" className="text-gray-600 hover:text-[#343434] transition-colors">Pricing</a></li>
-                                    <li><Link href="/about" className="text-gray-600 hover:text-[#343434] transition-colors">About</Link></li>
-                                    <li><Link href="/why-cloudflare" className="text-gray-600 hover:text-[#343434] transition-colors">Why Cloudflare?</Link></li>
-                                </ul>
-                            </div>
-
-                            {/* Legal Column */}
-                            <div>
-                                <h3 className="text-[#343434] font-semibold mb-4">Legal</h3>
-                                <ul className="space-y-3 text-sm">
-                                    <li><Link href="/privacy-policy" className="text-gray-600 hover:text-[#343434] transition-colors">Privacy Policy</Link></li>
-                                    <li><Link href="/terms-of-service" className="text-gray-600 hover:text-[#343434] transition-colors">Terms of Service</Link></li>
-                                    <li><a href="mailto:support@stnel.com" className="text-gray-600 hover:text-[#343434] transition-colors">Support</a></li>
-                                    <li><a href="https://status.stnel.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-[#343434] transition-colors">Status</a></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div className="pt-8 border-t border-gray-200">
-                            <p className="text-center text-sm text-gray-500">
-                                &copy; 2025 Stnel. Making Cloudflare Access simple for everyone.
-                            </p>
-                        </div>
-                    </div>
-                </footer>
+                <Footer />
             </div>
         </>
     );

@@ -1,13 +1,12 @@
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle, XCircle, AlertTriangle, ExternalLink, Copy, Eye, EyeOff, Loader2, Check } from 'lucide-react';
+import { AlertTriangle, Check, CheckCircle, Copy, ExternalLink, Eye, EyeOff, Loader2, XCircle } from 'lucide-react';
 import { useState } from 'react';
-import { router } from '@inertiajs/react';
 
 interface TokenPermission {
     required: boolean;
@@ -33,11 +32,7 @@ interface CloudflareTokenSetupProps {
     showInstructions?: boolean;
 }
 
-export function CloudflareTokenSetup({ 
-    organisationId, 
-    onTokenValidated, 
-    showInstructions = true 
-}: CloudflareTokenSetupProps) {
+export function CloudflareTokenSetup({ organisationId, onTokenValidated, showInstructions = true }: CloudflareTokenSetupProps) {
     const [token, setToken] = useState('');
     const [showToken, setShowToken] = useState(false);
     const [isValidating, setIsValidating] = useState(false);
@@ -50,12 +45,12 @@ export function CloudflareTokenSetup({
             title: 'Go to Cloudflare Dashboard',
             description: 'Open the Cloudflare API Tokens page',
             action: 'Click "Create Token"',
-            url: 'https://dash.cloudflare.com/profile/api-tokens'
+            url: 'https://dash.cloudflare.com/profile/api-tokens',
         },
         {
             title: 'Use Custom Token Template',
             description: 'Select "Custom token" to set specific permissions',
-            action: 'Click "Get started" under Custom token'
+            action: 'Click "Get started" under Custom token',
         },
         {
             title: 'Add Required Permissions',
@@ -63,32 +58,29 @@ export function CloudflareTokenSetup({
             permissions: [
                 'Account Settings:Read',
                 'Access: Apps and Policies:Edit',
-                'Access: Audit Logs:Read', 
+                'Access: Audit Logs:Read',
                 'Access: SSH Auditing:Edit',
                 'Access: Custom Pages:Edit',
                 'Access: Device Posture:Edit',
-                'Access: Organizations, Identity Providers, and Groups:Edit'
-            ]
+                'Access: Organizations, Identity Providers, and Groups:Edit',
+            ],
         },
         {
             title: 'Add Zone Permissions',
             description: 'Add Zone permissions for ALL zones:',
-            permissions: [
-                'Zone:Read',
-                'DNS:Edit'
-            ],
-            action: 'Select "Include - All zones" for both permissions'
+            permissions: ['Zone:Read', 'DNS:Edit'],
+            action: 'Select "Include - All zones" for both permissions',
         },
         {
             title: 'Set Account Resources',
             description: 'Under "Account Resources", select your account',
-            action: 'Choose "Include - All accounts" or select specific accounts'
+            action: 'Choose "Include - All accounts" or select specific accounts',
         },
         {
             title: 'Create Token',
             description: 'Review settings and create the token',
-            action: 'Copy the token immediately - it won\'t be shown again!'
-        }
+            action: "Copy the token immediately - it won't be shown again!",
+        },
     ];
 
     const validateToken = async () => {
@@ -104,12 +96,12 @@ export function CloudflareTokenSetup({
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || ''
+                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     token: token.trim(),
-                    ...(organisationId && { organisation_id: organisationId })
-                })
+                    ...(organisationId && { organisation_id: organisationId }),
+                }),
             });
 
             const result = await response.json();
@@ -118,11 +110,10 @@ export function CloudflareTokenSetup({
             if (result.valid && onTokenValidated) {
                 onTokenValidated(token.trim(), result);
             }
-
         } catch (error) {
             setValidation({
                 valid: false,
-                error: 'Failed to validate token. Please try again.'
+                error: 'Failed to validate token. Please try again.',
             });
         } finally {
             setIsValidating(false);
@@ -224,19 +215,17 @@ export function CloudflareTokenSetup({
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-lg">Setup Cloudflare API Token</CardTitle>
-                                <CardDescription>
-                                    Create a secure API token with the required permissions
-                                </CardDescription>
+                                <CardDescription>Create a secure API token with the required permissions</CardDescription>
                             </div>
                             <Button variant="outline" size="sm" onClick={copyInstructionText} disabled={copied}>
                                 {copied ? (
                                     <>
-                                        <Check className="h-4 w-4 mr-2 text-green-600" />
+                                        <Check className="mr-2 h-4 w-4 text-green-600" />
                                         Copied!
                                     </>
                                 ) : (
                                     <>
-                                        <Copy className="h-4 w-4 mr-2" />
+                                        <Copy className="mr-2 h-4 w-4" />
                                         Share Instructions
                                     </>
                                 )}
@@ -247,33 +236,29 @@ export function CloudflareTokenSetup({
                         {instructions.map((step, index) => (
                             <div key={index} className="space-y-3">
                                 <div className="flex items-start gap-3">
-                                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
+                                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-medium text-primary">
                                         {index + 1}
                                     </div>
                                     <div className="flex-1">
                                         <h4 className="font-medium text-foreground">{step.title}</h4>
-                                        <p className="text-sm text-muted-foreground mt-1">{step.description}</p>
-                                        {step.action && (
-                                            <p className="text-sm font-medium text-primary mt-1">→ {step.action}</p>
-                                        )}
+                                        <p className="mt-1 text-sm text-muted-foreground">{step.description}</p>
+                                        {step.action && <p className="mt-1 text-sm font-medium text-primary">→ {step.action}</p>}
                                         {step.url && (
                                             <Button variant="outline" size="sm" className="mt-2" asChild>
                                                 <a href={step.url} target="_blank" rel="noopener noreferrer">
-                                                    <ExternalLink className="h-4 w-4 mr-2" />
+                                                    <ExternalLink className="mr-2 h-4 w-4" />
                                                     Open Cloudflare Dashboard
                                                 </a>
                                             </Button>
                                         )}
                                         {step.permissions && (
-                                            <div className="mt-2 p-3 bg-muted/50 rounded-md">
-                                                <p className="text-sm font-medium mb-2">Required Permissions:</p>
-                                                <ul className="text-sm space-y-1">
+                                            <div className="mt-2 rounded-md bg-muted/50 p-3">
+                                                <p className="mb-2 text-sm font-medium">Required Permissions:</p>
+                                                <ul className="space-y-1 text-sm">
                                                     {step.permissions.map((permission, pIndex) => (
                                                         <li key={pIndex} className="flex items-center gap-2">
-                                                            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                                                            <code className="text-xs bg-background px-1 py-0.5 rounded">
-                                                                {permission}
-                                                            </code>
+                                                            <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                                                            <code className="rounded bg-background px-1 py-0.5 text-xs">{permission}</code>
                                                         </li>
                                                     ))}
                                                 </ul>
@@ -281,9 +266,7 @@ export function CloudflareTokenSetup({
                                         )}
                                     </div>
                                 </div>
-                                {index < instructions.length - 1 && (
-                                    <Separator className="my-4" />
-                                )}
+                                {index < instructions.length - 1 && <Separator className="my-4" />}
                             </div>
                         ))}
                     </CardContent>
@@ -294,9 +277,7 @@ export function CloudflareTokenSetup({
             <Card>
                 <CardHeader>
                     <CardTitle className="text-lg">Enter Your API Token</CardTitle>
-                    <CardDescription>
-                        Paste the token you created from the Cloudflare dashboard
-                    </CardDescription>
+                    <CardDescription>Paste the token you created from the Cloudflare dashboard</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
@@ -304,29 +285,20 @@ export function CloudflareTokenSetup({
                         <div className="relative">
                             <Input
                                 id="token"
-                                type={showToken ? "text" : "password"}
+                                type={showToken ? 'text' : 'password'}
                                 placeholder="Paste your Cloudflare API token here..."
                                 value={token}
                                 onChange={(e) => setToken(e.target.value)}
                                 className="pr-10"
                             />
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="absolute right-1 top-1 h-8 w-8 p-0"
-                                onClick={() => setShowToken(!showToken)}
-                            >
+                            <Button variant="ghost" size="sm" className="absolute top-1 right-1 h-8 w-8 p-0" onClick={() => setShowToken(!showToken)}>
                                 {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                             </Button>
                         </div>
                     </div>
 
-                    <Button 
-                        onClick={validateToken}
-                        disabled={!token.trim() || isValidating}
-                        className="w-full"
-                    >
-                        {isValidating && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                    <Button onClick={validateToken} disabled={!token.trim() || isValidating} className="w-full">
+                        {isValidating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         {isValidating ? 'Validating Token...' : 'Validate Token'}
                     </Button>
 
@@ -336,16 +308,12 @@ export function CloudflareTokenSetup({
                             {validation.valid ? (
                                 <Alert>
                                     <CheckCircle className="h-4 w-4" />
-                                    <AlertDescription>
-                                        Token is valid! All required permissions are granted.
-                                    </AlertDescription>
+                                    <AlertDescription>Token is valid! All required permissions are granted.</AlertDescription>
                                 </Alert>
                             ) : (
                                 <Alert variant="destructive">
                                     <AlertTriangle className="h-4 w-4" />
-                                    <AlertDescription>
-                                        {validation.error || 'Token validation failed'}
-                                    </AlertDescription>
+                                    <AlertDescription>{validation.error || 'Token validation failed'}</AlertDescription>
                                 </Alert>
                             )}
 
@@ -362,9 +330,7 @@ export function CloudflareTokenSetup({
                                                     {getPermissionIcon(permission)}
                                                     <div>
                                                         <p className="text-sm font-medium">{permission.description}</p>
-                                                        {permission.error && (
-                                                            <p className="text-xs text-red-600">{permission.error}</p>
-                                                        )}
+                                                        {permission.error && <p className="text-xs text-red-600">{permission.error}</p>}
                                                     </div>
                                                 </div>
                                                 {getPermissionStatus(permission)}
@@ -383,18 +349,18 @@ export function CloudflareTokenSetup({
                                     <CardContent>
                                         {validation.account_access.has_access ? (
                                             <div className="space-y-2">
-                                                <p className="text-sm text-green-600 flex items-center gap-2">
+                                                <p className="flex items-center gap-2 text-sm text-green-600">
                                                     <CheckCircle className="h-4 w-4" />
                                                     Token can access {validation.account_access.accounts.length} account(s)
                                                 </p>
-                                                {validation.account_access.accounts.map(account => (
-                                                    <div key={account.id} className="text-sm bg-muted/50 p-2 rounded">
+                                                {validation.account_access.accounts.map((account) => (
+                                                    <div key={account.id} className="rounded bg-muted/50 p-2 text-sm">
                                                         <strong>{account.name}</strong> ({account.type})
                                                     </div>
                                                 ))}
                                             </div>
                                         ) : (
-                                            <p className="text-sm text-red-600 flex items-center gap-2">
+                                            <p className="flex items-center gap-2 text-sm text-red-600">
                                                 <XCircle className="h-4 w-4" />
                                                 No account access - please check token permissions
                                             </p>

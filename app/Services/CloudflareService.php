@@ -2,31 +2,32 @@
 
 namespace App\Services;
 
-use App\Models\Organisation;
-use App\Models\CloudflareZone;
 use App\Models\AccessPolicy;
+use App\Models\CloudflareZone;
+use App\Models\Organisation;
+use Exception;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Http\Client\Response;
-use Exception;
 
 class CloudflareService
 {
     protected Organisation $organisation;
+
     protected PendingRequest $client;
+
     protected string $baseUrl = 'https://api.cloudflare.com/client/v4';
 
     public function __construct(Organisation $organisation)
     {
         $this->organisation = $organisation;
-        
-        if (!$organisation->api_token) {
+
+        if (! $organisation->api_token) {
             throw new Exception('Organisation does not have an API token configured');
         }
 
         $this->client = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $organisation->api_token,
+            'Authorization' => 'Bearer '.$organisation->api_token,
             'Content-Type' => 'application/json',
         ])->timeout(30)->retry(3, 100);
     }
@@ -37,11 +38,11 @@ class CloudflareService
     public function validateToken(): array
     {
         try {
-            $response = $this->client->get($this->baseUrl . '/user/tokens/verify');
-            
+            $response = $this->client->get($this->baseUrl.'/user/tokens/verify');
+
             if ($response->successful()) {
                 $this->organisation->update(['token_last_validated_at' => now()]);
-                
+
                 return [
                     'valid' => true,
                     'status' => $response->json('result.status'),
@@ -61,7 +62,7 @@ class CloudflareService
 
             return [
                 'valid' => false,
-                'error' => 'Failed to validate token: ' . $e->getMessage(),
+                'error' => 'Failed to validate token: '.$e->getMessage(),
             ];
         }
     }
@@ -72,8 +73,8 @@ class CloudflareService
     public function listZones(): array
     {
         try {
-            $response = $this->client->get($this->baseUrl . '/zones');
-            
+            $response = $this->client->get($this->baseUrl.'/zones');
+
             if ($response->successful()) {
                 return $response->json('result', []);
             }
@@ -95,7 +96,7 @@ class CloudflareService
     public function syncZones(): void
     {
         $zones = $this->listZones();
-        
+
         foreach ($zones as $zoneData) {
             CloudflareZone::updateOrCreate(
                 [
@@ -122,8 +123,8 @@ class CloudflareService
     public function listApplications(string $zoneId): array
     {
         try {
-            $response = $this->client->get($this->baseUrl . "/zones/{$zoneId}/access/apps");
-            
+            $response = $this->client->get($this->baseUrl."/zones/{$zoneId}/access/apps");
+
             if ($response->successful()) {
                 return $response->json('result', []);
             }
@@ -146,8 +147,8 @@ class CloudflareService
     public function createApplication(string $zoneId, array $data): array
     {
         try {
-            $response = $this->client->post($this->baseUrl . "/zones/{$zoneId}/access/apps", $data);
-            
+            $response = $this->client->post($this->baseUrl."/zones/{$zoneId}/access/apps", $data);
+
             if ($response->successful()) {
                 return $response->json('result');
             }
@@ -171,8 +172,8 @@ class CloudflareService
     public function updateApplication(string $zoneId, string $appId, array $data): array
     {
         try {
-            $response = $this->client->put($this->baseUrl . "/zones/{$zoneId}/access/apps/{$appId}", $data);
-            
+            $response = $this->client->put($this->baseUrl."/zones/{$zoneId}/access/apps/{$appId}", $data);
+
             if ($response->successful()) {
                 return $response->json('result');
             }
@@ -197,8 +198,8 @@ class CloudflareService
     public function deleteApplication(string $zoneId, string $appId): bool
     {
         try {
-            $response = $this->client->delete($this->baseUrl . "/zones/{$zoneId}/access/apps/{$appId}");
-            
+            $response = $this->client->delete($this->baseUrl."/zones/{$zoneId}/access/apps/{$appId}");
+
             if ($response->successful()) {
                 return true;
             }
@@ -244,12 +245,12 @@ class CloudflareService
      */
     public function deletePolicy(AccessPolicy $policy): void
     {
-        if (!$policy->cf_application_id) {
+        if (! $policy->cf_application_id) {
             return;
         }
 
         $zone = $policy->zone;
-        
+
         try {
             $this->deleteApplication($zone->zone_id, $policy->cf_application_id);
             $policy->update(['status' => 'inactive', 'cf_application_id' => null]);
@@ -265,8 +266,8 @@ class CloudflareService
     {
         try {
             $tokenInfo = $this->validateToken();
-            
-            if (!$tokenInfo['valid']) {
+
+            if (! $tokenInfo['valid']) {
                 return [
                     'success' => false,
                     'error' => $tokenInfo['error'],
@@ -279,7 +280,7 @@ class CloudflareService
                 'success' => true,
                 'token_status' => $tokenInfo['status'] ?? 'active',
                 'zones_count' => count($zones),
-                'zones' => array_map(fn($z) => [
+                'zones' => array_map(fn ($z) => [
                     'id' => $z['id'],
                     'name' => $z['name'],
                     'status' => $z['status'],
@@ -306,7 +307,7 @@ class CloudflareService
                 return $callback();
             } catch (Exception $e) {
                 $lastException = $e;
-                
+
                 if ($e->getCode() === 429) {
                     $delay = pow(2, $attempt) * 1000;
                     usleep($delay * 1000);

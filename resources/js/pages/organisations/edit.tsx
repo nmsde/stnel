@@ -1,17 +1,17 @@
+import InputError from '@/components/input-error';
+import { TokenStatusCard } from '@/components/token-status-card';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import InputError from '@/components/input-error';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import { TokenStatusCard } from '@/components/token-status-card';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { type OrganisationEditProps } from '@/types/cloudflare';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { ArrowLeft, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 
 const timezones = [
@@ -62,18 +62,18 @@ export default function OrganisationEdit() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         const submitData = { ...data };
         if (!submitData.api_token.trim()) {
             delete submitData.api_token;
         }
-        
+
         patch(`/organisations/${organisation.id}`, submitData);
     };
 
     const handleValidateToken = () => {
         if (!data.api_token.trim()) return;
-        
+
         validateToken(`/organisations/${organisation.id}/validate-token`, {
             api_token: data.api_token,
         });
@@ -83,7 +83,7 @@ export default function OrganisationEdit() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Edit ${organisation.name}`} />
 
-            <div className="max-w-4xl mx-auto space-y-6">
+            <div className="mx-auto max-w-4xl space-y-6">
                 {status && (
                     <div className="rounded-md bg-green-50 p-4">
                         <div className="flex">
@@ -98,7 +98,7 @@ export default function OrganisationEdit() {
                 <div className="flex items-center gap-4">
                     <Link href={`/organisations/${organisation.id}`}>
                         <Button variant="ghost" size="sm">
-                            <ArrowLeft className="h-4 w-4 mr-2" />
+                            <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to organisation
                         </Button>
                     </Link>
@@ -109,20 +109,12 @@ export default function OrganisationEdit() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Basic Information</CardTitle>
-                            <CardDescription>
-                                Update your organisation's basic details.
-                            </CardDescription>
+                            <CardDescription>Update your organisation's basic details.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="name">Organisation Name *</Label>
-                                <Input
-                                    id="name"
-                                    type="text"
-                                    value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
-                                    required
-                                />
+                                <Input id="name" type="text" value={data.name} onChange={(e) => setData('name', e.target.value)} required />
                                 <InputError message={errors.name} />
                             </div>
 
@@ -163,7 +155,7 @@ export default function OrganisationEdit() {
                     <TokenStatusCard organisation={organisation} />
 
                     {/* Actions */}
-                    <div className="flex gap-3 pt-6 border-t">
+                    <div className="flex gap-3 border-t pt-6">
                         <Button type="submit" disabled={processing}>
                             {processing ? 'Saving...' : 'Save Changes'}
                         </Button>
@@ -179,17 +171,13 @@ export default function OrganisationEdit() {
                 <Card className="border-red-200">
                     <CardHeader>
                         <CardTitle className="text-red-700">Danger Zone</CardTitle>
-                        <CardDescription>
-                            Permanent actions that cannot be undone.
-                        </CardDescription>
+                        <CardDescription>Permanent actions that cannot be undone.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="flex items-center justify-between">
                             <div>
                                 <h4 className="text-sm font-medium text-gray-900">Delete Organisation</h4>
-                                <p className="text-sm text-gray-600 mt-1">
-                                    This will permanently delete the organisation and all its data.
-                                </p>
+                                <p className="mt-1 text-sm text-gray-600">This will permanently delete the organisation and all its data.</p>
                             </div>
                             <Button variant="destructive" disabled>
                                 Delete Organisation

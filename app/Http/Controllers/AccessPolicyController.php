@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Organisation;
 use App\Models\AccessPolicy;
+use App\Models\Organisation;
 use App\Services\AccessPolicyService;
-use App\Services\CloudflareService;
 use App\Services\AuditService;
+use App\Services\SubscriptionService;
+use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
-use Exception;
 
 class AccessPolicyController extends Controller
 {
     use AuthorizesRequests;
 
     public function __construct(
-        protected AuditService $auditService
+        protected AuditService $auditService,
+        protected SubscriptionService $subscriptionService
     ) {}
 
     /**
@@ -72,6 +72,13 @@ class AccessPolicyController extends Controller
     {
         $this->authorize('update', $organisation);
 
+        // Check subscription limits before validation
+        if (! $this->subscriptionService->canUserCreatePolicy($request->user())) {
+            return back()
+                ->withErrors(['subscription' => 'You have reached the maximum number of protected endpoints for your plan. Please upgrade to create more policies.'])
+                ->withInput();
+        }
+
         $request->validate([
             'cloudflare_zone_id' => 'required|exists:cloudflare_zones,id',
             'name' => 'required|string|max:255',
@@ -97,7 +104,7 @@ class AccessPolicyController extends Controller
 
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Failed to create policy: ' . $e->getMessage()])
+                ->withErrors(['error' => 'Failed to create policy: '.$e->getMessage()])
                 ->withInput();
         }
     }
@@ -174,7 +181,7 @@ class AccessPolicyController extends Controller
 
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Failed to update policy: ' . $e->getMessage()])
+                ->withErrors(['error' => 'Failed to update policy: '.$e->getMessage()])
                 ->withInput();
         }
     }
@@ -199,7 +206,7 @@ class AccessPolicyController extends Controller
 
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Failed to delete policy: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Failed to delete policy: '.$e->getMessage()]);
         }
     }
 
@@ -221,7 +228,7 @@ class AccessPolicyController extends Controller
             return back()->with('status', 'Policy synced successfully.');
 
         } catch (Exception $e) {
-            return back()->withErrors(['error' => 'Failed to sync policy: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to sync policy: '.$e->getMessage()]);
         }
     }
 }

@@ -20,7 +20,7 @@ class OrganisationPolicy
      */
     public function view(User $user, Organisation $organisation): bool
     {
-        return $organisation->user_id === $user->id || 
+        return $organisation->user_id === $user->id ||
                $organisation->hasUser($user);
     }
 

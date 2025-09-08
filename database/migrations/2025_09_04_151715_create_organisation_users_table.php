@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('invited_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('joined_at')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['organisation_id', 'user_id']);
             $table->index('role');
         });

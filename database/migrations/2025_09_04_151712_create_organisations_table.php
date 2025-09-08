@@ -24,7 +24,7 @@ return new class extends Migration
             $table->json('settings')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index('slug');
             $table->index('user_id');
         });

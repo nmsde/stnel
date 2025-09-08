@@ -1,17 +1,16 @@
+import { CloudflareTokenSetup } from '@/components/cloudflare-token-setup';
+import InputError from '@/components/input-error';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import InputError from '@/components/input-error';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import { CloudflareTokenSetup } from '@/components/cloudflare-token-setup';
-import { type BreadcrumbItem, type SharedData } from '@/types';
-import { type OrganisationCreateProps } from '@/types/cloudflare';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { ArrowLeft, CheckCircle, AlertTriangle } from 'lucide-react';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { AlertTriangle, ArrowLeft, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -55,13 +54,13 @@ export default function OrganisationCreate() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         // Don't send api_token if it's empty
         const submitData = { ...data };
         if (!submitData.api_token.trim()) {
             delete submitData.api_token;
         }
-        
+
         post('/organisations', submitData);
     };
 
@@ -82,31 +81,38 @@ export default function OrganisationCreate() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Organization" />
 
-            <div className="max-w-4xl mx-auto space-y-6">
+            <div className="mx-auto max-w-4xl space-y-6">
                 <div className="flex items-center gap-4">
                     <Link href="/organisations">
                         <Button variant="ghost" size="sm">
-                            <ArrowLeft className="h-4 w-4 mr-2" />
+                            <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to organizations
                         </Button>
                     </Link>
                 </div>
 
                 {/* Progress Steps */}
-                <div className="flex items-center justify-center space-x-4 mb-8">
-                    <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
-                        currentStep === 'basic' ? 'bg-primary text-primary-foreground' : 
-                        currentStep === 'token' ? 'bg-muted text-muted-foreground' : 'bg-muted text-muted-foreground'
-                    }`}>
-                        <div className="w-6 h-6 rounded-full bg-current/20 flex items-center justify-center text-xs font-medium">1</div>
+                <div className="mb-8 flex items-center justify-center space-x-4">
+                    <div
+                        className={`flex items-center gap-2 rounded-full px-3 py-1 text-sm ${
+                            currentStep === 'basic'
+                                ? 'bg-primary text-primary-foreground'
+                                : currentStep === 'token'
+                                  ? 'bg-muted text-muted-foreground'
+                                  : 'bg-muted text-muted-foreground'
+                        }`}
+                    >
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-current/20 text-xs font-medium">1</div>
                         Basic Info
                     </div>
-                    <div className="w-8 h-px bg-border" />
-                    <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
-                        currentStep === 'token' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                    }`}>
-                        <div className="w-6 h-6 rounded-full bg-current/20 flex items-center justify-center text-xs font-medium">
-                            {tokenValidated ? <CheckCircle className="w-3 h-3" /> : '2'}
+                    <div className="h-px w-8 bg-border" />
+                    <div
+                        className={`flex items-center gap-2 rounded-full px-3 py-1 text-sm ${
+                            currentStep === 'token' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                        }`}
+                    >
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-current/20 text-xs font-medium">
+                            {tokenValidated ? <CheckCircle className="h-3 w-3" /> : '2'}
                         </div>
                         Cloudflare Setup
                     </div>
@@ -116,9 +122,7 @@ export default function OrganisationCreate() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Create New Organization</CardTitle>
-                            <CardDescription>
-                                Set up a new organization to protect your applications with Cloudflare Access.
-                            </CardDescription>
+                            <CardDescription>Set up a new organization to protect your applications with Cloudflare Access.</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleBasicInfoNext} className="space-y-6">
@@ -164,7 +168,7 @@ export default function OrganisationCreate() {
                                     <InputError message={errors.timezone} />
                                 </div>
 
-                                <div className="flex gap-3 pt-6 border-t">
+                                <div className="flex gap-3 border-t pt-6">
                                     <Button type="submit" disabled={!data.name.trim()} className="flex-1">
                                         Continue to Cloudflare Setup
                                     </Button>
@@ -187,15 +191,9 @@ export default function OrganisationCreate() {
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <h3 className="font-medium text-foreground">{data.name}</h3>
-                                        <p className="text-sm text-muted-foreground">
-                                            {data.description || 'No description'}
-                                        </p>
+                                        <p className="text-sm text-muted-foreground">{data.description || 'No description'}</p>
                                     </div>
-                                    <Button 
-                                        variant="ghost" 
-                                        size="sm"
-                                        onClick={() => setCurrentStep('basic')}
-                                    >
+                                    <Button variant="ghost" size="sm" onClick={() => setCurrentStep('basic')}>
                                         Edit
                                     </Button>
                                 </div>
@@ -225,14 +223,12 @@ export default function OrganisationCreate() {
                                                 <AlertTriangle className="h-5 w-5 text-amber-600" />
                                                 <div>
                                                     <p className="font-medium text-foreground">Token Required</p>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        Validate your token above to continue
-                                                    </p>
+                                                    <p className="text-sm text-muted-foreground">Validate your token above to continue</p>
                                                 </div>
                                             </>
                                         )}
                                     </div>
-                                    
+
                                     <div className="flex gap-3">
                                         <Button
                                             variant="outline"
@@ -245,18 +241,15 @@ export default function OrganisationCreate() {
                                         >
                                             Skip for Now
                                         </Button>
-                                        <Button
-                                            onClick={() => handleSubmit(new Event('submit') as any)}
-                                            disabled={processing || !tokenValidated}
-                                        >
+                                        <Button onClick={() => handleSubmit(new Event('submit') as any)} disabled={processing || !tokenValidated}>
                                             {processing ? 'Creating...' : 'Create Organization'}
                                         </Button>
                                     </div>
                                 </div>
 
                                 {validationResult?.account_access?.accounts && (
-                                    <div className="mt-4 pt-4 border-t">
-                                        <p className="text-sm font-medium mb-2">Connected Accounts:</p>
+                                    <div className="mt-4 border-t pt-4">
+                                        <p className="mb-2 text-sm font-medium">Connected Accounts:</p>
                                         <div className="flex flex-wrap gap-2">
                                             {validationResult.account_access.accounts.map((account: any) => (
                                                 <Badge key={account.id} variant="secondary">

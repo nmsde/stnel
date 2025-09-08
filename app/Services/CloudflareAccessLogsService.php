@@ -3,27 +3,28 @@
 namespace App\Services;
 
 use App\Models\Organisation;
-use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Http;
 use Exception;
+use Illuminate\Support\Facades\Http;
 
 class CloudflareAccessLogsService
 {
     protected Organisation $organisation;
+
     protected string $baseUrl;
+
     protected array $headers;
 
     public function __construct(Organisation $organisation)
     {
         $this->organisation = $organisation;
         $this->baseUrl = 'https://api.cloudflare.com/client/v4';
-        
-        if (!$organisation->api_token) {
+
+        if (! $organisation->api_token) {
             throw new Exception('Organization does not have an API token configured.');
         }
 
         $this->headers = [
-            'Authorization' => 'Bearer ' . $organisation->api_token,
+            'Authorization' => 'Bearer '.$organisation->api_token,
             'Content-Type' => 'application/json',
         ];
     }
@@ -36,9 +37,9 @@ class CloudflareAccessLogsService
         try {
             // Get account ID first if not cached
             $accountId = $this->organisation->cloudflare_account_id ?? $this->getAccountId();
-            
+
             $url = "{$this->baseUrl}/accounts/{$accountId}/access/logs/access_requests";
-            
+
             $queryParams = array_merge([
                 'limit' => $filters['limit'] ?? 100,
                 'direction' => 'desc', // Most recent first
@@ -50,6 +51,7 @@ class CloudflareAccessLogsService
 
             if ($response->successful()) {
                 $data = $response->json();
+
                 return [
                     'success' => true,
                     'logs' => $data['result'] ?? [],
@@ -59,7 +61,7 @@ class CloudflareAccessLogsService
 
             return [
                 'success' => false,
-                'error' => 'Failed to fetch access logs: ' . $response->body(),
+                'error' => 'Failed to fetch access logs: '.$response->body(),
                 'logs' => [],
             ];
 
@@ -78,6 +80,7 @@ class CloudflareAccessLogsService
     public function getApplicationLogs(string $applicationId, array $filters = []): array
     {
         $filters['app_uid'] = $applicationId;
+
         return $this->getAccessLogs($filters);
     }
 
@@ -87,18 +90,20 @@ class CloudflareAccessLogsService
     public function getUserLogs(string $userEmail, array $filters = []): array
     {
         $filters['user_email'] = $userEmail;
+
         return $this->getAccessLogs($filters);
     }
 
     /**
      * Get logs for a specific time range
      */
-    public function getLogsInRange(\DateTime $since, \DateTime $until = null, array $filters = []): array
+    public function getLogsInRange(\DateTime $since, ?\DateTime $until = null, array $filters = []): array
     {
         $filters['since'] = $since->format(\DateTime::RFC3339);
         if ($until) {
             $filters['until'] = $until->format(\DateTime::RFC3339);
         }
+
         return $this->getAccessLogs($filters);
     }
 
@@ -154,12 +159,12 @@ class CloudflareAccessLogsService
 
         if ($response->successful()) {
             $accounts = $response->json()['result'] ?? [];
-            if (!empty($accounts)) {
+            if (! empty($accounts)) {
                 $accountId = $accounts[0]['id'];
-                
+
                 // Cache the account ID
                 $this->organisation->update(['cloudflare_account_id' => $accountId]);
-                
+
                 return $accountId;
             }
         }
@@ -224,12 +229,12 @@ class CloudflareAccessLogsService
             }
 
             // Track unique users
-            if (isset($log['user_email']) && !in_array($log['user_email'], $users)) {
+            if (isset($log['user_email']) && ! in_array($log['user_email'], $users)) {
                 $users[] = $log['user_email'];
             }
 
             // Track unique applications
-            if (isset($log['app_domain']) && !in_array($log['app_domain'], $applications)) {
+            if (isset($log['app_domain']) && ! in_array($log['app_domain'], $applications)) {
                 $applications[] = $log['app_domain'];
             }
 

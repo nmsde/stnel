@@ -1,16 +1,16 @@
+import InputError from '@/components/input-error';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
-import InputError from '@/components/input-error';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { type PolicyEditProps, type PolicyRule } from '@/types/cloudflare';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { ArrowLeft, Plus, X, Mail, Globe, Shield, Clock } from 'lucide-react';
+import { ArrowLeft, Clock, Globe, Mail, Plus, Shield, X } from 'lucide-react';
 import { useState } from 'react';
 
 const sessionDurations = [
@@ -59,7 +59,7 @@ export default function PolicyEdit() {
         path: policy.path || '/',
         session_duration: policy.session_duration || '24h',
         require_mfa: policy.require_mfa || false,
-        rules: policy.rules || [] as PolicyRule[],
+        rules: policy.rules || ([] as PolicyRule[]),
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -69,43 +69,46 @@ export default function PolicyEdit() {
 
     const addEmailRule = () => {
         if (!emailInput.trim()) return;
-        
+
         const newRule: PolicyRule = {
             type: 'email',
             value: emailInput.trim(),
         };
-        
+
         setData('rules', [...data.rules, newRule]);
         setEmailInput('');
     };
 
     const addDomainRule = () => {
         if (!domainInput.trim()) return;
-        
+
         const newRule: PolicyRule = {
             type: 'domain',
             value: domainInput.trim(),
         };
-        
+
         setData('rules', [...data.rules, newRule]);
         setDomainInput('');
     };
 
     const removeRule = (index: number) => {
-        setData('rules', data.rules.filter((_, i) => i !== index));
+        setData(
+            'rules',
+            data.rules.filter((_, i) => i !== index),
+        );
     };
 
-    const selectedZone = zones.find(zone => zone.id.toString() === policy.cloudflare_zone_id?.toString());
+    const selectedZone = zones.find((zone) => zone.id.toString() === policy.cloudflare_zone_id?.toString());
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Edit ${policy.name}`} />
 
-            <div className="max-w-4xl mx-auto space-y-6">
+            <div className="mx-auto max-w-4xl space-y-6">
                 <div className="flex items-center gap-4">
                     <Link href={`/organisations/${organisation.id}/policies/${policy.id}`}>
                         <Button variant="ghost" size="sm">
-                            <ArrowLeft className="h-4 w-4 mr-2" />
+                            <ArrowLeft className="mr-2 h-4 w-4" />
                             Back to policy
                         </Button>
                     </Link>
@@ -116,9 +119,7 @@ export default function PolicyEdit() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Basic Configuration</CardTitle>
-                            <CardDescription>
-                                Update the basic settings for your access policy.
-                            </CardDescription>
+                            <CardDescription>Update the basic settings for your access policy.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="grid gap-6 md:grid-cols-2">
@@ -136,7 +137,7 @@ export default function PolicyEdit() {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="zone">Cloudflare Zone</Label>
-                                    <div className="p-3 bg-gray-50 rounded-lg">
+                                    <div className="rounded-lg bg-gray-50 p-3">
                                         <div className="flex items-center gap-2">
                                             <Globe className="h-4 w-4" />
                                             <span className="font-medium">{selectedZone?.name}</span>
@@ -144,9 +145,7 @@ export default function PolicyEdit() {
                                                 {selectedZone?.status}
                                             </Badge>
                                         </div>
-                                        <p className="text-xs text-gray-600 mt-1">
-                                            Zone cannot be changed after policy creation
-                                        </p>
+                                        <p className="mt-1 text-xs text-gray-600">Zone cannot be changed after policy creation</p>
                                     </div>
                                 </div>
                             </div>
@@ -161,23 +160,14 @@ export default function PolicyEdit() {
                                         placeholder={selectedZone ? `admin.${selectedZone.name}` : 'admin.example.com'}
                                         required
                                     />
-                                    <p className="text-xs text-gray-600">
-                                        The subdomain or domain to protect
-                                    </p>
+                                    <p className="text-xs text-gray-600">The subdomain or domain to protect</p>
                                     <InputError message={errors.domain} />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="path">Path</Label>
-                                    <Input
-                                        id="path"
-                                        value={data.path}
-                                        onChange={(e) => setData('path', e.target.value)}
-                                        placeholder="/"
-                                    />
-                                    <p className="text-xs text-gray-600">
-                                        The path to protect (e.g., /admin, /api)
-                                    </p>
+                                    <Input id="path" value={data.path} onChange={(e) => setData('path', e.target.value)} placeholder="/" />
+                                    <p className="text-xs text-gray-600">The path to protect (e.g., /admin, /api)</p>
                                     <InputError message={errors.path} />
                                 </div>
                             </div>
@@ -188,9 +178,7 @@ export default function PolicyEdit() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Access Rules</CardTitle>
-                            <CardDescription>
-                                Define who can access this application.
-                            </CardDescription>
+                            <CardDescription>Define who can access this application.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             {/* Email Rules */}
@@ -200,11 +188,9 @@ export default function PolicyEdit() {
                                         <Mail className="h-4 w-4" />
                                         Email Addresses
                                     </Label>
-                                    <p className="text-sm text-gray-600 mt-1">
-                                        Allow specific email addresses to access this application.
-                                    </p>
+                                    <p className="mt-1 text-sm text-gray-600">Allow specific email addresses to access this application.</p>
                                 </div>
-                                
+
                                 <div className="flex gap-2">
                                     <Input
                                         value={emailInput}
@@ -225,11 +211,9 @@ export default function PolicyEdit() {
                                         <Globe className="h-4 w-4" />
                                         Email Domains
                                     </Label>
-                                    <p className="text-sm text-gray-600 mt-1">
-                                        Allow all users from specific domains (e.g., company.com).
-                                    </p>
+                                    <p className="mt-1 text-sm text-gray-600">Allow all users from specific domains (e.g., company.com).</p>
                                 </div>
-                                
+
                                 <div className="flex gap-2">
                                     <Input
                                         value={domainInput}
@@ -249,7 +233,7 @@ export default function PolicyEdit() {
                                     <Label>Current Rules ({data.rules.length})</Label>
                                     <div className="space-y-2">
                                         {data.rules.map((rule, index) => (
-                                            <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                            <div key={index} className="flex items-center justify-between rounded-lg bg-gray-50 p-3">
                                                 <div className="flex items-center gap-2">
                                                     {rule.type === 'email' ? (
                                                         <Mail className="h-4 w-4 text-blue-500" />
@@ -261,12 +245,7 @@ export default function PolicyEdit() {
                                                         {rule.type}
                                                     </Badge>
                                                 </div>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => removeRule(index)}
-                                                >
+                                                <Button type="button" variant="ghost" size="sm" onClick={() => removeRule(index)}>
                                                     <X className="h-4 w-4" />
                                                 </Button>
                                             </div>
@@ -283,9 +262,7 @@ export default function PolicyEdit() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Security Settings</CardTitle>
-                            <CardDescription>
-                                Configure additional security requirements.
-                            </CardDescription>
+                            <CardDescription>Configure additional security requirements.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="grid gap-6 md:grid-cols-2">
@@ -294,10 +271,7 @@ export default function PolicyEdit() {
                                         <Clock className="h-4 w-4" />
                                         Session Duration
                                     </Label>
-                                    <Select 
-                                        value={data.session_duration} 
-                                        onValueChange={(value) => setData('session_duration', value)}
-                                    >
+                                    <Select value={data.session_duration} onValueChange={(value) => setData('session_duration', value)}>
                                         <SelectTrigger>
                                             <SelectValue />
                                         </SelectTrigger>
@@ -309,9 +283,7 @@ export default function PolicyEdit() {
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    <p className="text-xs text-gray-600">
-                                        How long users stay authenticated
-                                    </p>
+                                    <p className="text-xs text-gray-600">How long users stay authenticated</p>
                                 </div>
 
                                 <div className="space-y-4">
@@ -329,16 +301,14 @@ export default function PolicyEdit() {
                                             Require MFA for this application
                                         </Label>
                                     </div>
-                                    <p className="text-xs text-gray-600">
-                                        Users will need to provide additional authentication factors
-                                    </p>
+                                    <p className="text-xs text-gray-600">Users will need to provide additional authentication factors</p>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Actions */}
-                    <div className="flex gap-3 pt-6 border-t">
+                    <div className="flex gap-3 border-t pt-6">
                         <Button type="submit" disabled={processing || data.rules.length === 0}>
                             {processing ? 'Updating...' : 'Update Policy'}
                         </Button>

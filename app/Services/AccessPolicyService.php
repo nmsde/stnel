@@ -3,11 +3,11 @@
 namespace App\Services;
 
 use App\Models\AccessPolicy;
+use App\Models\CloudflareZone;
 use App\Models\Organisation;
 use App\Models\User;
-use App\Models\CloudflareZone;
-use Illuminate\Support\Collection;
 use Exception;
+use Illuminate\Support\Collection;
 
 class AccessPolicyService
 {
@@ -103,7 +103,7 @@ class AccessPolicyService
             }
 
             $this->audit->logDelete($policy->organisation, $user, $policy, 'policy_deleted');
-            
+
             return $policy->delete();
         } catch (Exception $e) {
             $this->audit->logCustom(
@@ -121,15 +121,15 @@ class AccessPolicyService
     /**
      * Sync a policy with Cloudflare.
      */
-    public function sync(AccessPolicy $policy, CloudflareService $cloudflare = null): bool
+    public function sync(AccessPolicy $policy, ?CloudflareService $cloudflare = null): bool
     {
         try {
-            if (!$cloudflare) {
+            if (! $cloudflare) {
                 $cloudflare = new CloudflareService($policy->organisation);
             }
-            
+
             $cloudflare->syncPolicy($policy);
-            
+
             $this->audit->logPolicySync(
                 $policy->organisation,
                 auth()->user(),
@@ -140,7 +140,7 @@ class AccessPolicyService
             return true;
         } catch (Exception $e) {
             $policy->update(['status' => 'inactive']);
-            
+
             $this->audit->logPolicySync(
                 $policy->organisation,
                 auth()->user(),
@@ -185,7 +185,7 @@ class AccessPolicyService
             ['errors' => $errors]
         );
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             throw new Exception('Some policies failed to create', 0, null);
         }
 
@@ -200,7 +200,7 @@ class AccessPolicyService
         $formatted = [];
 
         foreach ($rules as $rule) {
-            if (!isset($rule['type']) || !isset($rule['value'])) {
+            if (! isset($rule['type']) || ! isset($rule['value'])) {
                 continue;
             }
 
@@ -232,11 +232,11 @@ class AccessPolicyService
             $errors['rules'] = 'At least one access rule is required';
         } else {
             foreach ($data['rules'] as $index => $rule) {
-                if ($rule['type'] === 'email' && !filter_var($rule['value'], FILTER_VALIDATE_EMAIL)) {
+                if ($rule['type'] === 'email' && ! filter_var($rule['value'], FILTER_VALIDATE_EMAIL)) {
                     $errors["rules.{$index}"] = 'Invalid email address';
                 }
-                
-                if ($rule['type'] === 'domain' && !preg_match('/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', $rule['value'])) {
+
+                if ($rule['type'] === 'domain' && ! preg_match('/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', $rule['value'])) {
                     $errors["rules.{$index}"] = 'Invalid domain format';
                 }
             }

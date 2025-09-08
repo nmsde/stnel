@@ -28,10 +28,10 @@ return new class extends Migration
         Schema::table('organisations', function (Blueprint $table) {
             $table->dropColumn([
                 'token_expires_at',
-                'token_last_checked', 
+                'token_last_checked',
                 'token_permissions',
                 'token_renewal_notified',
-                'token_renewal_notified_at'
+                'token_renewal_notified_at',
             ]);
         });
     }

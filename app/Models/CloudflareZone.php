@@ -40,7 +40,7 @@ class CloudflareZone extends Model
 
     public function needsSync(): bool
     {
-        if (!$this->synced_at) {
+        if (! $this->synced_at) {
             return true;
         }
 
