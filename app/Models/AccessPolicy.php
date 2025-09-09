@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class AccessPolicy extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'uuid',
         'organisation_id',
         'cloudflare_zone_id',
         'cf_application_id',
@@ -29,6 +31,67 @@ class AccessPolicy extends Model
         'rules' => 'array',
         'require_mfa' => 'boolean',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($policy) {
+            // Generate UUID if not provided
+            if (empty($policy->uuid)) {
+                $policy->uuid = (string) Str::uuid();
+            }
+        });
+    }
+
+    /**
+     * Get the route key for the model.
+     * Use UUID for API routes, fallback to ID for internal routes
+     */
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
+
+    /**
+     * Resolve a binding value to the model instance.
+     * Supports both UUID and numeric ID for backward compatibility
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        // If field is explicitly specified, use it
+        if ($field) {
+            return $this->where($field, $value)->first();
+        }
+
+        // Try UUID format first (contains dashes)
+        if (str_contains($value, '-') && strlen($value) === 36) {
+            return $this->where('uuid', $value)->first();
+        }
+
+        // Fallback to numeric ID for backward compatibility
+        if (is_numeric($value)) {
+            return $this->where('id', $value)->first();
+        }
+
+        return null;
+    }
+
+    /**
+     * Find policy by UUID or ID
+     */
+    public static function findByIdentifier(string $identifier)
+    {
+        if (str_contains($identifier, '-') && strlen($identifier) === 36) {
+            return static::where('uuid', $identifier)->first();
+        }
+
+        if (is_numeric($identifier)) {
+            return static::find($identifier);
+        }
+
+        return null;
+    }
 
     public function organisation()
     {

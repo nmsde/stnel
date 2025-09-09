@@ -12,6 +12,7 @@ class Organisation extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'uuid',
         'user_id',
         'name',
         'slug',
@@ -47,6 +48,12 @@ class Organisation extends Model
         parent::boot();
 
         static::creating(function ($organisation) {
+            // Generate UUID if not provided
+            if (empty($organisation->uuid)) {
+                $organisation->uuid = (string) Str::uuid();
+            }
+
+            // Generate slug if not provided
             if (empty($organisation->slug)) {
                 $organisation->slug = Str::slug($organisation->name);
 
@@ -57,6 +64,55 @@ class Organisation extends Model
                 }
             }
         });
+    }
+
+    /**
+     * Get the route key for the model.
+     * Use UUID for API routes, fallback to ID for internal routes
+     */
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
+
+    /**
+     * Resolve a binding value to the model instance.
+     * Supports both UUID and numeric ID for backward compatibility
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        // If field is explicitly specified, use it
+        if ($field) {
+            return $this->where($field, $value)->first();
+        }
+
+        // Try UUID format first (contains dashes)
+        if (str_contains($value, '-') && strlen($value) === 36) {
+            return $this->where('uuid', $value)->first();
+        }
+
+        // Fallback to numeric ID for backward compatibility
+        if (is_numeric($value)) {
+            return $this->where('id', $value)->first();
+        }
+
+        return null;
+    }
+
+    /**
+     * Find organization by UUID or ID
+     */
+    public static function findByIdentifier(string $identifier)
+    {
+        if (str_contains($identifier, '-') && strlen($identifier) === 36) {
+            return static::where('uuid', $identifier)->first();
+        }
+
+        if (is_numeric($identifier)) {
+            return static::find($identifier);
+        }
+
+        return null;
     }
 
     public function owner()

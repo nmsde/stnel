@@ -329,33 +329,186 @@ export default function OrganisationShow() {
                             </div>
                         ) : (
                             <div className="space-y-4">
-                                {/* Table Header */}
-                                <div className="overflow-hidden rounded-lg border border-border">
-                                    <div className="border-b border-border bg-muted/50 px-4 py-3">
-                                        <div className="grid grid-cols-12 items-center gap-4 text-sm font-medium text-muted-foreground">
-                                            <div className="col-span-1 flex justify-center">
-                                                <button onClick={toggleSelectAll} className="h-4 w-4 text-muted-foreground hover:text-foreground">
-                                                    {isSelectAllChecked ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
-                                                </button>
+                                <>
+                                {/* Desktop Table */}
+                                <div className="hidden lg:block">
+                                    <div className="overflow-hidden rounded-lg border border-border">
+                                        {/* Table Header */}
+                                        <div className="border-b border-border bg-muted/50 px-4 py-3">
+                                            <div className="grid grid-cols-12 items-center gap-4 text-sm font-medium text-muted-foreground">
+                                                <div className="col-span-1 flex justify-center">
+                                                    <button onClick={toggleSelectAll} className="h-4 w-4 text-muted-foreground hover:text-foreground">
+                                                        {isSelectAllChecked ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
+                                                    </button>
+                                                </div>
+                                                <div className="col-span-3">App Name</div>
+                                                <div className="col-span-2">Protection</div>
+                                                <div className="col-span-2">URL</div>
+                                                <div className="col-span-1">Access</div>
+                                                <div className="col-span-2">Protected</div>
+                                                <div className="col-span-1">Actions</div>
                                             </div>
-                                            <div className="col-span-3">App Name</div>
-                                            <div className="col-span-2">Protection</div>
-                                            <div className="col-span-2">URL</div>
-                                            <div className="col-span-1">Access</div>
-                                            <div className="col-span-2">Protected</div>
-                                            <div className="col-span-1">Actions</div>
+                                        </div>
+                                        {/* Desktop Table Body */}
+                                        <div className="divide-y divide-border">
+                                            {filteredPolicies.map((policy) => (
+                                                <div key={policy.id} className="px-4 py-4 transition-colors hover:bg-muted/30">
+                                                    <div className="grid grid-cols-12 items-center gap-4">
+                                                        <div className="col-span-1 flex justify-center">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => togglePolicySelection(policy.id)}
+                                                                className="h-8 w-8 p-0"
+                                                            >
+                                                                {selectedPolicies.includes(policy.id) ? (
+                                                                    <CheckSquare className="h-4 w-4" />
+                                                                ) : (
+                                                                    <Square className="h-4 w-4" />
+                                                                )}
+                                                            </Button>
+                                                        </div>
+                                                        <div className="col-span-3">
+                                                            <div className="mb-1 flex items-center gap-2">
+                                                                <Link
+                                                                    href={`/organisations/${organisation.id}/policies/${policy.id}`}
+                                                                    className="truncate font-medium transition-colors hover:text-primary"
+                                                                >
+                                                                    {policy.name}
+                                                                </Link>
+                                                                {policy.require_mfa && (
+                                                                    <Badge variant="outline" className="text-xs">
+                                                                        MFA
+                                                                    </Badge>
+                                                                )}
+                                                            </div>
+                                                            <div className="text-xs text-muted-foreground">{policy.zone?.name}</div>
+                                                        </div>
+                                                        <div className="col-span-2">
+                                                            <Badge variant={getStatusColor(policy.status)} className="text-xs">
+                                                                {policy.status}
+                                                            </Badge>
+                                                        </div>
+                                                        <div className="col-span-2">
+                                                            <div className="truncate text-sm text-foreground">{policy.domain}</div>
+                                                            {policy.path && policy.path !== '/' && (
+                                                                <div className="truncate text-xs text-muted-foreground">{policy.path}</div>
+                                                            )}
+                                                        </div>
+                                                        <div className="col-span-1 text-sm text-muted-foreground">{policy.rules?.length || 0}</div>
+                                                        <div className="col-span-2 text-xs text-muted-foreground">
+                                                            {new Date(policy.created_at).toLocaleDateString()}
+                                                        </div>
+                                                        <div className="col-span-1 flex items-center gap-1">
+                                                            <Link href={`/organisations/${organisation.id}/policies/${policy.id}`}>
+                                                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="View App">
+                                                                    <Eye className="h-3 w-3" />
+                                                                </Button>
+                                                            </Link>
+                                                            <Link href={`/organisations/${organisation.id}/policies/${policy.id}/edit`}>
+                                                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Edit Protection">
+                                                                    <Edit className="h-3 w-3" />
+                                                                </Button>
+                                                            </Link>
+                                                            {policy.status === 'pending' && (
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    className="h-8 w-8 p-0"
+                                                                    title="Update Protection"
+                                                                    onClick={() =>
+                                                                        router.post(`/organisations/${organisation.id}/policies/${policy.id}/sync`)
+                                                                    }
+                                                                >
+                                                                    <RefreshCw className="h-3 w-3" />
+                                                                </Button>
+                                                            )}
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-8 w-8 p-0"
+                                                                title="Remove Protection"
+                                                                onClick={() => {
+                                                                    if (confirm(`Are you sure you want to remove protection from "${policy.name}"?`)) {
+                                                                        router.delete(`/organisations/${organisation.id}/policies/${policy.id}`);
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <Trash2 className="h-3 w-3 text-destructive" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
-                                    <div className="divide-y divide-border">
-                                        {filteredPolicies.map((policy) => (
-                                            <div key={policy.id} className="px-4 py-4 transition-colors hover:bg-muted/30">
-                                                <div className="grid grid-cols-12 items-center gap-4">
-                                                    <div className="col-span-1 flex justify-center">
+                                </div>
+
+                                {/* Mobile Card Layout */}
+                                <div className="space-y-4 lg:hidden">
+                                    {/* Mobile Bulk Actions */}
+                                    {selectedPolicies.length > 0 && (
+                                        <div className="flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 p-3">
+                                            <div className="flex items-center gap-2">
+                                                <CheckSquare className="h-4 w-4 text-amber-600" />
+                                                <span className="text-sm font-medium text-amber-800">
+                                                    {selectedPolicies.length} app{selectedPolicies.length !== 1 ? 's' : ''} selected
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        setSelectedPolicies([]);
+                                                        setIsSelectAllChecked(false);
+                                                    }}
+                                                >
+                                                    Clear
+                                                </Button>
+                                                <Button variant="destructive" size="sm" onClick={handleBulkDelete}>
+                                                    <Trash2 className="mr-2 h-4 w-4" />
+                                                    Remove Protection
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Select All Toggle for Mobile */}
+                                    <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 p-3">
+                                        <span className="text-sm font-medium text-muted-foreground">
+                                            {filteredPolicies.length} app{filteredPolicies.length !== 1 ? 's' : ''} found
+                                        </span>
+                                        <Button variant="ghost" size="sm" onClick={toggleSelectAll} className="text-sm">
+                                            {isSelectAllChecked ? (
+                                                <>
+                                                    <CheckSquare className="mr-2 h-4 w-4" />
+                                                    Deselect All
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Square className="mr-2 h-4 w-4" />
+                                                    Select All
+                                                </>
+                                            )}
+                                        </Button>
+                                    </div>
+
+                                    {/* Mobile Policy Cards */}
+                                    {filteredPolicies.map((policy) => (
+                                        <div
+                                            key={policy.id}
+                                            className="rounded-lg border border-border bg-white p-4 shadow-sm transition-colors hover:bg-muted/20"
+                                        >
+                                            <div className="space-y-3">
+                                                {/* Header Row */}
+                                                <div className="flex items-start justify-between">
+                                                    <div className="flex items-start gap-3 min-w-0 flex-1">
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
                                                             onClick={() => togglePolicySelection(policy.id)}
-                                                            className="h-8 w-8 p-0"
+                                                            className="mt-0.5 h-5 w-5 p-0 shrink-0"
                                                         >
                                                             {selectedPolicies.includes(policy.id) ? (
                                                                 <CheckSquare className="h-4 w-4" />
@@ -363,81 +516,102 @@ export default function OrganisationShow() {
                                                                 <Square className="h-4 w-4" />
                                                             )}
                                                         </Button>
+                                                        <div className="min-w-0 flex-1">
+                                                            <div className="flex items-start gap-2 mb-2">
+                                                                <Link
+                                                                    href={`/organisations/${organisation.id}/policies/${policy.id}`}
+                                                                    className="font-semibold text-lg leading-tight transition-colors hover:text-primary min-w-0 flex-1"
+                                                                >
+                                                                    {policy.name}
+                                                                </Link>
+                                                                <Badge variant={getStatusColor(policy.status)} className="text-xs shrink-0">
+                                                                    {policy.status}
+                                                                </Badge>
+                                                            </div>
+                                                            <div className="text-sm text-muted-foreground break-all">
+                                                                {policy.domain}{policy.path && policy.path !== '/' && policy.path}
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div className="col-span-3">
-                                                        <div className="mb-1 flex items-center gap-2">
-                                                            <Link
-                                                                href={`/organisations/${organisation.id}/policies/${policy.id}`}
-                                                                className="truncate font-medium transition-colors hover:text-primary"
-                                                            >
-                                                                {policy.name}
-                                                            </Link>
+                                                </div>
+
+                                                {/* Details Grid */}
+                                                <div className="grid grid-cols-2 gap-3 text-sm">
+                                                    <div>
+                                                        <span className="text-muted-foreground">Zone:</span>
+                                                        <div className="font-medium">{policy.zone?.name || 'N/A'}</div>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-muted-foreground">Rules:</span>
+                                                        <div className="font-medium">{policy.rules?.length || 0}</div>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-muted-foreground">Protected:</span>
+                                                        <div className="font-medium">{new Date(policy.created_at).toLocaleDateString()}</div>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-muted-foreground">Security:</span>
+                                                        <div className="flex items-center gap-1">
                                                             {policy.require_mfa && (
                                                                 <Badge variant="outline" className="text-xs">
                                                                     MFA
                                                                 </Badge>
                                                             )}
+                                                            {!policy.require_mfa && (
+                                                                <span className="text-muted-foreground text-xs">Standard</span>
+                                                            )}
                                                         </div>
-                                                        <div className="text-xs text-muted-foreground">{policy.zone?.name}</div>
                                                     </div>
-                                                    <div className="col-span-2">
-                                                        <Badge variant={getStatusColor(policy.status)} className="text-xs">
-                                                            {policy.status}
-                                                        </Badge>
-                                                    </div>
-                                                    <div className="col-span-2">
-                                                        <div className="truncate text-sm text-foreground">{policy.domain}</div>
-                                                        {policy.path && policy.path !== '/' && (
-                                                            <div className="truncate text-xs text-muted-foreground">{policy.path}</div>
-                                                        )}
-                                                    </div>
-                                                    <div className="col-span-1 text-sm text-muted-foreground">{policy.rules?.length || 0}</div>
-                                                    <div className="col-span-2 text-xs text-muted-foreground">
-                                                        {new Date(policy.created_at).toLocaleDateString()}
-                                                    </div>
-                                                    <div className="col-span-1 flex items-center gap-1">
+                                                </div>
+
+                                                {/* Actions */}
+                                                <div className="flex items-center justify-between pt-2 border-t border-border">
+                                                    <div className="flex items-center gap-2">
                                                         <Link href={`/organisations/${organisation.id}/policies/${policy.id}`}>
-                                                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="View App">
-                                                                <Eye className="h-3 w-3" />
+                                                            <Button variant="ghost" size="sm" className="h-8">
+                                                                <Eye className="mr-2 h-3 w-3" />
+                                                                View
                                                             </Button>
                                                         </Link>
                                                         <Link href={`/organisations/${organisation.id}/policies/${policy.id}/edit`}>
-                                                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Edit Protection">
-                                                                <Edit className="h-3 w-3" />
+                                                            <Button variant="ghost" size="sm" className="h-8">
+                                                                <Edit className="mr-2 h-3 w-3" />
+                                                                Edit
                                                             </Button>
                                                         </Link>
                                                         {policy.status === 'pending' && (
                                                             <Button
                                                                 variant="ghost"
                                                                 size="sm"
-                                                                className="h-8 w-8 p-0"
-                                                                title="Update Protection"
+                                                                className="h-8"
                                                                 onClick={() =>
                                                                     router.post(`/organisations/${organisation.id}/policies/${policy.id}/sync`)
                                                                 }
                                                             >
-                                                                <RefreshCw className="h-3 w-3" />
+                                                                <RefreshCw className="mr-2 h-3 w-3" />
+                                                                Sync
                                                             </Button>
                                                         )}
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            className="h-8 w-8 p-0"
-                                                            title="Remove Protection"
-                                                            onClick={() => {
-                                                                if (confirm(`Are you sure you want to remove protection from "${policy.name}"?`)) {
-                                                                    router.delete(`/organisations/${organisation.id}/policies/${policy.id}`);
-                                                                }
-                                                            }}
-                                                        >
-                                                            <Trash2 className="h-3 w-3 text-destructive" />
-                                                        </Button>
                                                     </div>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="h-8 text-destructive hover:text-destructive"
+                                                        onClick={() => {
+                                                            if (confirm(`Are you sure you want to remove protection from "${policy.name}"?`)) {
+                                                                router.delete(`/organisations/${organisation.id}/policies/${policy.id}`);
+                                                            }
+                                                        }}
+                                                    >
+                                                        <Trash2 className="mr-2 h-3 w-3" />
+                                                        Remove
+                                                    </Button>
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
+                                        </div>
+                                    ))}
                                 </div>
+                                </>
                             </div>
                         )}
                     </CardContent>

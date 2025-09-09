@@ -84,7 +84,9 @@ class OrganizationsController extends Controller
     private function formatOrganization(Organisation $organization): array
     {
         return [
-            'id' => $organization->id,
+            'id' => $organization->uuid, // Use UUID for external API
+            'uuid' => $organization->uuid, // Explicit UUID field
+            'legacy_id' => $organization->id, // Keep numeric ID for backward compatibility
             'name' => $organization->name,
             'slug' => $organization->slug,
             'description' => $organization->description,

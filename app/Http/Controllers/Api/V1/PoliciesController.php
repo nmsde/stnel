@@ -396,7 +396,9 @@ class PoliciesController extends Controller
 
         return response()->json([
             'exists' => true,
-            'id' => $existingPolicy->id,
+            'id' => $existingPolicy->uuid, // Use UUID for external API
+            'uuid' => $existingPolicy->uuid, // Explicit UUID field
+            'legacy_id' => $existingPolicy->id, // Keep numeric ID for backward compatibility
             'current_policy' => $this->formatPolicy($existingPolicy),
             'has_changes' => $comparison['has_changes'],
             'changes' => $comparison['changes'],
@@ -591,7 +593,9 @@ class PoliciesController extends Controller
     private function formatPolicy(AccessPolicy $policy): array
     {
         return [
-            'id' => $policy->id,
+            'id' => $policy->uuid, // Use UUID for external API
+            'uuid' => $policy->uuid, // Explicit UUID field
+            'legacy_id' => $policy->id, // Keep numeric ID for backward compatibility
             'name' => $policy->name,
             'domain' => $policy->domain,
             'path' => $policy->path,
