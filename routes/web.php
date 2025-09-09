@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccessLogsController;
 use App\Http\Controllers\AccessPolicyController;
+use App\Http\Controllers\ApiTokensController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationSettingsController;
 use App\Http\Controllers\OrganisationController;
@@ -33,6 +34,10 @@ Route::get('/privacy-policy', function () {
 Route::get('/terms-of-service', function () {
     return Inertia::render('terms-of-service');
 })->name('terms-of-service');
+
+Route::get('/cli', function () {
+    return Inertia::render('cli-docs');
+})->name('cli-docs');
 
 // Stripe webhook (no auth middleware)
 Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook'])->name('stripe.webhook');
@@ -70,6 +75,16 @@ Route::middleware([
         ->name('organisations.notification-settings');
     Route::post('organisations/{organisation}/notification-settings', [NotificationSettingsController::class, 'update'])
         ->name('organisations.notification-settings.update');
+
+    // API Tokens
+    Route::resource('api-tokens', ApiTokensController::class);
+    Route::post('api-tokens/{api_token}/regenerate', [ApiTokensController::class, 'regenerate'])
+        ->name('api-tokens.regenerate');
+    
+    // API Documentation
+    Route::get('docs/api', function () {
+        return Inertia::render('docs/api');
+    })->name('docs.api');
 });
 
 require __DIR__.'/settings.php';

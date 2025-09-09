@@ -10,12 +10,31 @@ export default function About() {
 
     return (
         <>
-            <Head title="About Stnel - The Missing Interface for Cloudflare Access">
+            <Head title="About Stnel | Professional Cloudflare Access Management Platform">
                 <meta
                     name="description"
-                    content="Stnel transforms Cloudflare Access from a complex API into an intuitive visual interface. Built by developers who understand the pain of enterprise security management."
+                    content="Learn how Stnel transforms complex Cloudflare Access APIs into an intuitive visual dashboard. Built by security professionals for streamlined zero trust access management, policy configuration, and user authentication monitoring."
                 />
-                <meta name="keywords" content="Stnel, Cloudflare Access Management, Zero Trust Interface, Security Dashboard" />
+                <meta
+                    name="keywords"
+                    content="Stnel About, Cloudflare Access Management Platform, Zero Trust Interface, Security Dashboard, Access Policy Management, Identity Access Management, ZTNA Platform, Enterprise Security Tools, Cloudflare Access GUI, Authentication Management"
+                />
+                <meta property="og:title" content="About Stnel - Professional Cloudflare Access Management" />
+                <meta
+                    property="og:description"
+                    content="Discover how Stnel simplifies Cloudflare Access management with professional-grade dashboard tools for zero trust security and access control."
+                />
+                <meta property="og:type" content="website" />
+                <meta property="og:image" content="/app-show.png" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="About Stnel - Cloudflare Access Dashboard Platform" />
+                <meta
+                    name="twitter:description"
+                    content="Professional platform that transforms complex Cloudflare Access APIs into intuitive visual management tools for enterprise security teams."
+                />
+                <meta name="twitter:image" content="/app-show.png" />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href="https://stnel.com/about" />
             </Head>
 
             <div className="bg-white">

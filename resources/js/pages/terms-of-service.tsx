@@ -9,11 +9,31 @@ export default function TermsOfService() {
 
     return (
         <>
-            <Head title="Terms of Service - Stnel">
+            <Head title="Terms of Service | Legal Agreement - Stnel Cloudflare Access Management Platform">
                 <meta
                     name="description"
-                    content="Read Stnel's Terms of Service to understand your rights and responsibilities when using our Cloudflare Access management platform."
+                    content="Comprehensive terms of service for Stnel's Cloudflare Access management platform. Understand your rights, responsibilities, and our service agreement for zero trust security management, API token usage, and data protection."
                 />
+                <meta
+                    name="keywords"
+                    content="Terms of Service, Legal Agreement, Cloudflare Access Terms, Zero Trust Terms, Service Agreement, API Token Usage Policy, User Agreement, Legal Terms, Platform Terms, Security Service Agreement, Access Management Terms, Enterprise Service Terms, SaaS Terms of Service"
+                />
+                <meta property="og:title" content="Terms of Service | Legal Agreement for Cloudflare Access Management" />
+                <meta
+                    property="og:description"
+                    content="Fair and transparent terms of service for Stnel's Cloudflare Access management platform. Clear legal agreement covering service usage, responsibilities, and rights."
+                />
+                <meta property="og:type" content="website" />
+                <meta property="og:image" content="/logo-cloud.svg" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Terms of Service - Legal Agreement | Stnel" />
+                <meta
+                    name="twitter:description"
+                    content="Read Stnel's transparent terms of service for Cloudflare Access management. Clear legal terms covering service usage and user rights."
+                />
+                <meta name="twitter:image" content="/logo-cloud.svg" />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href="https://stnel.com/terms-of-service" />
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700" rel="stylesheet" />
             </Head>

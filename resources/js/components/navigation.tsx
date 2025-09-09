@@ -52,6 +52,14 @@ export default function Navigation({ currentPage }: NavigationProps) {
                                 >
                                     Why Cloudflare?
                                 </Link>
+                                <Link
+                                    href="/cli"
+                                    className={`px-3 py-2 text-sm font-medium transition-colors ${
+                                        currentPage === 'cli-docs' ? 'text-[#343434]' : 'text-gray-600 hover:text-[#343434]'
+                                    }`}
+                                >
+                                    CLI
+                                </Link>
                             </div>
                         </div>
                     </div>

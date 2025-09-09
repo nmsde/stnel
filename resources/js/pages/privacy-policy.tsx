@@ -9,11 +9,31 @@ export default function PrivacyPolicy() {
 
     return (
         <>
-            <Head title="Privacy Policy - Stnel">
+            <Head title="Privacy Policy | Data Protection & Security - Stnel Cloudflare Access Management">
                 <meta
                     name="description"
-                    content="Read Stnel's Privacy Policy to understand how we collect, use, and protect your personal information."
+                    content="Comprehensive privacy policy for Stnel's Cloudflare Access management platform. Learn how we protect your data, handle API tokens securely, and maintain enterprise-grade security for zero trust access management."
                 />
+                <meta
+                    name="keywords"
+                    content="Privacy Policy, Data Protection, Cloudflare API Token Security, Zero Trust Privacy, Enterprise Security Privacy, GDPR Compliance, Data Encryption, Access Management Privacy, Security Policy, User Data Protection, API Token Encryption, Privacy Rights, Data Retention Policy"
+                />
+                <meta property="og:title" content="Stnel Privacy Policy | Enterprise Data Protection Standards" />
+                <meta
+                    property="og:description"
+                    content="Transparent privacy practices for Cloudflare Access management. Enterprise-grade data protection with encrypted API tokens and strict security controls."
+                />
+                <meta property="og:type" content="website" />
+                <meta property="og:image" content="/logo-cloud.svg" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Privacy Policy - Enterprise Data Protection | Stnel" />
+                <meta
+                    name="twitter:description"
+                    content="Read how Stnel protects your Cloudflare Access data with enterprise security, encrypted storage, and transparent privacy practices."
+                />
+                <meta name="twitter:image" content="/logo-cloud.svg" />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href="https://stnel.com/privacy-policy" />
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700" rel="stylesheet" />
             </Head>

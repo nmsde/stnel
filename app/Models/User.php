@@ -67,6 +67,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get API tokens created by this user.
+     */
+    public function apiTokens()
+    {
+        return $this->hasMany(ApiToken::class);
+    }
+
+    /**
      * Get all organisations (owned + member).
      */
     public function allOrganisations()

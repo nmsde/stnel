@@ -40,6 +40,11 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/cli" className="text-gray-600 transition-colors hover:text-[#343434]">
+                                    CLI
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/about" className="text-gray-600 transition-colors hover:text-[#343434]">
                                     About
                                 </Link>

@@ -10,12 +10,31 @@ export default function UseCases() {
 
     return (
         <>
-            <Head title="Use Cases - How Teams Use Stnel to Protect Their Applications">
+            <Head title="Cloudflare Access Use Cases | Internal Apps, WordPress & Development Environment Protection - Stnel">
                 <meta
                     name="description"
-                    content="See how businesses protect internal CRMs, WordPress admin panels, and development environments with Cloudflare Access through Stnel's simple interface."
+                    content="Real-world Cloudflare Access protection scenarios: secure internal CRMs, stop WordPress brute force attacks, protect staging environments. See how businesses use zero trust security for internal applications, admin panels, and development sites."
                 />
-                <meta name="keywords" content="Cloudflare Access Use Cases, CRM Protection, WordPress Security, Development Environment Access" />
+                <meta
+                    name="keywords"
+                    content="Cloudflare Access Use Cases, Zero Trust Security Use Cases, Internal Application Protection, WordPress Admin Security, Development Environment Access Control, CRM Protection, Staging Site Security, Admin Panel Access Management, Business Application Security, Zero Trust Network Access Examples, Cloudflare Access Implementation, Internal Dashboard Security, WordPress wp-admin Protection, Development Site Access Control"
+                />
+                <meta property="og:title" content="Cloudflare Access Use Cases | Business Application Protection Examples" />
+                <meta
+                    property="og:description"
+                    content="Discover proven Cloudflare Access use cases: protect internal business apps, secure WordPress admin panels, and control development environment access with zero trust security."
+                />
+                <meta property="og:type" content="website" />
+                <meta property="og:image" content="/app-show.png" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Real Cloudflare Access Use Cases for Business Security" />
+                <meta
+                    name="twitter:description"
+                    content="See how businesses protect CRMs, WordPress sites, and development environments using Cloudflare Access with Stnel's intuitive management interface."
+                />
+                <meta name="twitter:image" content="/app-show.png" />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href="https://stnel.com/use-cases" />
             </Head>
 
             <div className="bg-white">

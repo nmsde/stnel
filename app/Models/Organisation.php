@@ -91,6 +91,11 @@ class Organisation extends Model
         return $this->hasOne(NotificationSetting::class);
     }
 
+    public function apiTokens()
+    {
+        return $this->hasMany(ApiToken::class, 'organization_id');
+    }
+
     public function getApiTokenAttribute()
     {
         if (! $this->encrypted_api_token) {

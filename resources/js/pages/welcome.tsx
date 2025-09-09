@@ -113,20 +113,95 @@ export default function Welcome() {
 
     return (
         <>
-            <Head title="Stnel - Easy Cloudflare Access Management">
+            <Head title="Stnel - Cloudflare Access Dashboard | Zero Trust Security Management Platform">
                 <meta
                     name="description"
-                    content="Streamline your Cloudflare Access policies with an intuitive dashboard. Manage users, configure rules, and monitor access across all your domains."
+                    content="Professional Cloudflare Access management platform. Streamline zero trust security policies, manage user access controls, and monitor authentication logs across all your applications with our intuitive dashboard."
                 />
                 <meta
                     name="keywords"
-                    content="Cloudflare Access Management, Access Policy Dashboard, Zero Trust Management, Cloudflare Interface, Access Control"
+                    content="Cloudflare Access Dashboard, Zero Trust Security, Access Policy Management, Cloudflare Access Interface, Identity Access Management, Zero Trust Network Access, ZTNA, Cloudflare Access GUI, Security Access Control, Multi-Factor Authentication, SSO Management, Application Security"
                 />
-                <meta property="og:title" content="Stnel - Easy Cloudflare Access Management" />
-                <meta property="og:description" content="The intuitive dashboard for managing your Cloudflare Access policies and users." />
+                <meta property="og:title" content="Stnel - Professional Cloudflare Access Management Platform" />
+                <meta
+                    property="og:description"
+                    content="Simplify Cloudflare Access policy management with our professional dashboard. Configure zero trust security, manage user permissions, and monitor access logs efficiently."
+                />
                 <meta property="og:type" content="website" />
+                <meta property="og:image" content="/app-show.png" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Stnel - Cloudflare Access Dashboard | Zero Trust Security Management" />
+                <meta
+                    name="twitter:description"
+                    content="Professional platform for managing Cloudflare Access policies, zero trust security, and user authentication across all your applications."
+                />
+                <meta name="twitter:image" content="/app-show.png" />
+                <meta name="robots" content="index, follow" />
+                <meta name="author" content="Stnel" />
+                <link rel="canonical" href="https://stnel.com" />
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700" rel="stylesheet" />
+                
+                {/* Structured Data */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "Organization",
+                            "name": "Stnel",
+                            "description": "Professional Cloudflare Access management platform for zero trust security and access control",
+                            "url": "https://stnel.com",
+                            "logo": "https://stnel.com/logo-cloud.svg",
+                            "foundingDate": "2025",
+                            "serviceType": "Software as a Service",
+                            "applicationCategory": "SecurityApplication",
+                            "operatingSystem": "Web Browser",
+                            "offers": {
+                                "@type": "Offer",
+                                "name": "Free Plan",
+                                "description": "Free Cloudflare Access management for up to 50 users",
+                                "price": "0",
+                                "priceCurrency": "USD"
+                            },
+                            "mainEntityOfPage": {
+                                "@type": "WebPage",
+                                "@id": "https://stnel.com/"
+                            },
+                            "sameAs": []
+                        })
+                    }}
+                />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "SoftwareApplication",
+                            "name": "Stnel",
+                            "applicationCategory": "SecurityApplication",
+                            "operatingSystem": "Web Browser",
+                            "description": "Professional dashboard for managing Cloudflare Access policies, monitoring user activity, and controlling zero trust network access across your applications",
+                            "url": "https://stnel.com",
+                            "screenshot": "https://stnel.com/app-show.png",
+                            "offers": {
+                                "@type": "Offer",
+                                "price": "0",
+                                "priceCurrency": "USD",
+                                "description": "Free for up to 50 users"
+                            },
+                            "applicationSubCategory": "Access Management",
+                            "featureList": [
+                                "Cloudflare Access Policy Management",
+                                "Zero Trust Security Configuration",
+                                "User Access Monitoring",
+                                "Email and Slack Notifications",
+                                "Multi-Organization Support",
+                                "Real-time Access Logs"
+                            ]
+                        })
+                    }}
+                />
             </Head>
 
             <div className="overflow-hidden bg-white">
@@ -285,16 +360,16 @@ export default function Welcome() {
                                     </div>
                                 </div>
 
-                                {/* Early Access CTA */}
+                                {/* CLI Documentation CTA */}
                                 <div className="mt-8 text-center">
-                                    <p className="mb-4 text-gray-300">Want early access to the CLI tool?</p>
-                                    <a
-                                        href="mailto:hello@stnel.com?subject=CLI%20Early%20Access"
+                                    <p className="mb-4 text-gray-300">Ready to deploy policies as code?</p>
+                                    <Link
+                                        href="/cli"
                                         className="inline-flex items-center rounded-2xl bg-[#FFCD45] px-6 py-3 font-semibold text-[#343434] transition-all duration-200 hover:bg-[#FFD700]"
                                     >
-                                        Join the Waitlist
+                                        View CLI Documentation
                                         <ArrowRight className="ml-2 h-4 w-4" />
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -367,7 +442,7 @@ export default function Welcome() {
                                         </div>
                                         <div className="flex items-center">
                                             <div className="mr-4 h-2 w-2 rounded-full bg-[#FFCD45]" />
-                                            <span className="text-gray-700">5 Protected Endpoints</span>
+                                            <span className="text-gray-700">5 Protected Apps</span>
                                         </div>
                                         <div className="flex items-center">
                                             <div className="mr-4 h-2 w-2 rounded-full bg-[#FFCD45]" />
@@ -405,15 +480,15 @@ export default function Welcome() {
                                         </div>
                                         <div className="flex items-center">
                                             <div className="mr-4 h-2 w-2 rounded-full bg-[#FFCD45]" />
-                                            <span className="text-gray-100">Unlimited Protected Endpoints</span>
+                                            <span className="text-gray-100">Unlimited Protected Apps</span>
                                         </div>
                                         <div className="flex items-center">
                                             <div className="mr-4 h-2 w-2 rounded-full bg-[#FFCD45]" />
-                                            <span className="text-gray-100">Advanced Access Management</span>
+                                            <span className="text-gray-100">CLI Integration</span>
                                         </div>
                                         <div className="flex items-center">
                                             <div className="mr-4 h-2 w-2 rounded-full bg-[#FFCD45]" />
-                                            <span className="text-gray-100">Email Notifications</span>
+                                            <span className="text-gray-100">Email & Slack Notifications</span>
                                         </div>
                                     </div>
 

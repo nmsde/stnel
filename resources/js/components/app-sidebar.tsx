@@ -19,7 +19,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Activity, Bell, Building2, ChevronRight, LayoutGrid, Settings, Shield } from 'lucide-react';
+import { Activity, Bell, Building2, ChevronRight, LayoutGrid, Settings, Shield, Key } from 'lucide-react';
 import React, { useState } from 'react';
 import AppLogo from './app-logo';
 
@@ -33,6 +33,11 @@ const mainNavItems: NavItem[] = [
         title: 'Organizations',
         href: '/organisations',
         icon: Building2,
+    },
+    {
+        title: 'API Tokens',
+        href: '/api-tokens',
+        icon: Key,
     },
 ];
 

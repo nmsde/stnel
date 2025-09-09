@@ -10,12 +10,31 @@ export default function WhyCloudflare() {
 
     return (
         <>
-            <Head title="Why Cloudflare? - The Foundation for Modern Web Infrastructure">
+            <Head title="Why Cloudflare? | Enterprise Web Security & CDN Platform Benefits">
                 <meta
                     name="description"
-                    content="Cloudflare powers 20% of the internet. Learn why businesses choose Cloudflare for performance, security, and reliability - including free access control for up to 50 users."
+                    content="Discover why Cloudflare powers 20% of the internet. Learn about enterprise-grade CDN, DDoS protection, zero trust security, SSL certificates, and Cloudflare Access features that protect millions of websites worldwide with industry-leading performance and reliability."
                 />
-                <meta name="keywords" content="Cloudflare, CDN, Web Security, DDoS Protection, Cloudflare Access, Zero Trust" />
+                <meta
+                    name="keywords"
+                    content="Why Cloudflare, Cloudflare Benefits, CDN Performance, DDoS Protection, Web Security, Cloudflare Access Zero Trust, SSL Certificates, Website Protection, Internet Security, Edge Computing, DNS Security, Bot Protection, Web Application Firewall, Enterprise Security"
+                />
+                <meta property="og:title" content="Why Choose Cloudflare? Enterprise Security & Performance Platform" />
+                <meta
+                    property="og:description"
+                    content="Cloudflare powers 20% of the internet with enterprise-grade security, performance, and reliability. Discover why millions trust Cloudflare for web protection."
+                />
+                <meta property="og:type" content="website" />
+                <meta property="og:image" content="/cloudflare-logo.svg" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Why Cloudflare? Enterprise Web Security & CDN Platform" />
+                <meta
+                    name="twitter:description"
+                    content="Learn why businesses choose Cloudflare for enterprise-grade security, performance, and zero trust access management."
+                />
+                <meta name="twitter:image" content="/cloudflare-logo.svg" />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href="https://stnel.com/why-cloudflare" />
             </Head>
 
             <div className="bg-white">
