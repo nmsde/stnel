@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MobileCardSkeleton, TableSkeleton } from '@/components/loading-skeletons';
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link } from '@inertiajs/react';
 import { Clock, Key, Plus, Settings, Trash2, Eye, AlertTriangle, CheckSquare, Square, Search } from 'lucide-react';
@@ -34,6 +35,9 @@ export default function ApiTokensIndex({ tokens, organizations, availableScopes 
     const [selectedOrg, setSelectedOrg] = useState('all');
     const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
     const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
+    
+    // Loading state - check if we're still fetching token data  
+    const isLoading = !tokens || tokens === undefined;
 
     const formatScopes = (scopes: string[]) => {
         return scopes.map(scope => availableScopes[scope] || scope).join(', ');
@@ -177,7 +181,19 @@ export default function ApiTokensIndex({ tokens, organizations, availableScopes 
                         </div>
 
                         {/* Tokens List */}
-                        {filteredTokens.length === 0 ? (
+                        {isLoading ? (
+                            <>
+                                {/* Desktop Loading Table */}
+                                <div className="hidden lg:block">
+                                    <TableSkeleton rows={3} />
+                                </div>
+                                
+                                {/* Mobile Loading Cards */}
+                                <div className="lg:hidden">
+                                    <MobileCardSkeleton cards={3} />
+                                </div>
+                            </>
+                        ) : filteredTokens.length === 0 ? (
                             <div className="py-12 text-center">
                                 <Key className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                                 <h3 className="mb-2 text-lg font-medium text-foreground">No API tokens found</h3>

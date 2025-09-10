@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AccessLogSkeleton, StatCardsSkeleton } from '@/components/loading-skeletons';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
@@ -51,6 +52,9 @@ export default function AccessLogs() {
     const [searchTerm, setSearchTerm] = useState(filters.user_email || '');
     const [selectedAction, setSelectedAction] = useState(filters.action || 'all');
     const [selectedPolicy, setSelectedPolicy] = useState(filters.app_uid || 'all');
+    
+    // Loading state - check if we're still fetching data from Cloudflare APIs
+    const isLoading = !logs || stats === undefined;
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -158,38 +162,42 @@ export default function AccessLogs() {
                 )}
 
                 {/* Statistics */}
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-                    <Card>
-                        <CardContent className="pt-6">
-                            <div className="text-2xl font-bold text-foreground">{stats.total}</div>
-                            <div className="text-sm text-muted-foreground">Total Requests</div>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardContent className="pt-6">
-                            <div className="text-2xl font-bold text-foreground">{stats.allowed}</div>
-                            <div className="text-sm text-muted-foreground">Allowed</div>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardContent className="pt-6">
-                            <div className="text-2xl font-bold text-foreground">{stats.blocked}</div>
-                            <div className="text-sm text-muted-foreground">Blocked</div>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardContent className="pt-6">
-                            <div className="text-2xl font-bold text-foreground">{stats.unique_users}</div>
-                            <div className="text-sm text-muted-foreground">Unique Users</div>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardContent className="pt-6">
-                            <div className="text-2xl font-bold text-foreground">{stats.unique_applications}</div>
-                            <div className="text-sm text-muted-foreground">Applications</div>
-                        </CardContent>
-                    </Card>
-                </div>
+                {isLoading ? (
+                    <StatCardsSkeleton cards={5} />
+                ) : (
+                    <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+                        <Card>
+                            <CardContent className="pt-6">
+                                <div className="text-2xl font-bold text-foreground">{stats.total}</div>
+                                <div className="text-sm text-muted-foreground">Total Requests</div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardContent className="pt-6">
+                                <div className="text-2xl font-bold text-foreground">{stats.allowed}</div>
+                                <div className="text-sm text-muted-foreground">Allowed</div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardContent className="pt-6">
+                                <div className="text-2xl font-bold text-foreground">{stats.blocked}</div>
+                                <div className="text-sm text-muted-foreground">Blocked</div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardContent className="pt-6">
+                                <div className="text-2xl font-bold text-foreground">{stats.unique_users}</div>
+                                <div className="text-sm text-muted-foreground">Unique Users</div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardContent className="pt-6">
+                                <div className="text-2xl font-bold text-foreground">{stats.unique_applications}</div>
+                                <div className="text-sm text-muted-foreground">Applications</div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
 
                 {/* Filters */}
                 <Card>
@@ -248,7 +256,9 @@ export default function AccessLogs() {
                 </Card>
 
                 {/* Logs List */}
-                {filteredLogs.length === 0 ? (
+                {isLoading ? (
+                    <AccessLogSkeleton rows={5} />
+                ) : filteredLogs.length === 0 ? (
                     <Card>
                         <CardContent className="flex flex-col items-center justify-center py-12">
                             <Shield className="mb-4 h-12 w-12 text-muted-foreground" />

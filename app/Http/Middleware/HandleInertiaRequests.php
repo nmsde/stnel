@@ -44,7 +44,13 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ? [
+                    ...$request->user()->toArray(),
+                    'is_admin' => $request->user()->isAdmin(),
+                    'has_pro_access' => $request->user()->hasProAccess(),
+                    'is_on_free_plan' => $request->user()->isOnFreePlan(),
+                    'can_access_api_tokens' => $request->user()->canAccessApiTokens(),
+                ] : null,
             ],
             'organisations' => $request->user() ? Organisation::where('user_id', $request->user()->id)
                 ->orWhereHas('users', function ($query) use ($request) {

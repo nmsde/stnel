@@ -28,7 +28,7 @@ class BillingController extends Controller
         $showWelcome = session('subscription_intent_welcome', false);
         session()->forget('subscription_intent_welcome');
 
-        return Inertia::render('Billing/Index', [
+        return Inertia::render('billing/index', [
             'plans' => $plans,
             'currentSubscription' => $currentSubscription,
             'usageStats' => $usageStats,
@@ -74,7 +74,7 @@ class BillingController extends Controller
 
     public function success()
     {
-        return Inertia::render('Billing/Success');
+        return Inertia::render('billing/success');
     }
 
     public function cancel()

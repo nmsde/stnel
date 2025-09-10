@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';

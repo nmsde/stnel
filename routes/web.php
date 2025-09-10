@@ -76,15 +76,17 @@ Route::middleware([
     Route::post('organisations/{organisation}/notification-settings', [NotificationSettingsController::class, 'update'])
         ->name('organisations.notification-settings.update');
 
-    // API Tokens
-    Route::resource('api-tokens', ApiTokensController::class);
-    Route::post('api-tokens/{api_token}/regenerate', [ApiTokensController::class, 'regenerate'])
-        ->name('api-tokens.regenerate');
-    
-    // API Documentation
-    Route::get('docs/api', function () {
-        return Inertia::render('docs/api');
-    })->name('docs.api');
+    // API Tokens - Pro feature only
+    Route::middleware(['pro.access'])->group(function () {
+        Route::resource('api-tokens', ApiTokensController::class);
+        Route::post('api-tokens/{api_token}/regenerate', [ApiTokensController::class, 'regenerate'])
+            ->name('api-tokens.regenerate');
+        
+        // API Documentation
+        Route::get('docs/api', function () {
+            return Inertia::render('docs/api');
+        })->name('docs.api');
+    });
 });
 
 require __DIR__.'/settings.php';

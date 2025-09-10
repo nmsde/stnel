@@ -2,7 +2,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { index as billing } from '@/routes/billing';
 import { Link } from '@inertiajs/react';
 import { AlertTriangle, ArrowRight, Zap } from 'lucide-react';
 
@@ -98,7 +97,7 @@ export default function UpgradePrompt({ type, current, limit, unlimited = false,
 
                 <div className="flex items-center gap-3">
                     <Button asChild variant={config.buttonVariant} size="sm">
-                        <Link href={billing().url}>
+                        <Link href="/settings/billing">
                             {config.buttonText}
                             <ArrowRight className="ml-2 h-4 w-4" />
                         </Link>

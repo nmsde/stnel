@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'workos_id',
         'avatar',
+        'role',
     ];
 
     /**
@@ -180,5 +181,33 @@ class User extends Authenticatable
     public function needsUpgrade(): bool
     {
         return $this->hasReachedOrganizationLimit() || $this->hasReachedEndpointLimit();
+    }
+
+    /**
+     * Role-based access control methods
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isMember(): bool
+    {
+        return $this->role === 'member';
+    }
+
+    public function hasProAccess(): bool
+    {
+        return $this->isAdmin() || $this->isOnProPlan();
+    }
+
+    public function canAccessApiTokens(): bool
+    {
+        return $this->hasProAccess();
+    }
+
+    public function canAccessAdvancedFeatures(): bool
+    {
+        return $this->hasProAccess();
     }
 }

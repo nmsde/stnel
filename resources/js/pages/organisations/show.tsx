@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MobileCardSkeleton, StatCardsSkeleton, TableSkeleton } from '@/components/loading-skeletons';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { type OrganisationShowProps, type PolicyIndexProps } from '@/types/cloudflare';
@@ -58,6 +59,9 @@ export default function OrganisationShow() {
     const [selectedStatus, setSelectedStatus] = useState('all');
     const [selectedPolicies, setSelectedPolicies] = useState<number[]>([]);
     const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
+    
+    // Loading state - check if we're still fetching data from Cloudflare APIs
+    const isLoading = !policies || policies.data === undefined || logStats === undefined;
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -202,62 +206,66 @@ export default function OrganisationShow() {
                 </div>
 
                 {/* Real-time Stats Cards */}
-                <div className="grid gap-6 md:grid-cols-3">
-                    {/* Protection Status */}
-                    <Card className="border-primary/20 bg-white">
-                        <CardContent className="pt-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-muted-foreground">Protected Apps</p>
-                                    <div className="flex items-baseline gap-2">
-                                        <p className="text-3xl font-bold text-primary">{policies.data.filter((p) => p.status === 'active').length}</p>
-                                        <span className="text-lg text-muted-foreground">active</span>
+                {isLoading ? (
+                    <StatCardsSkeleton cards={3} />
+                ) : (
+                    <div className="grid gap-6 md:grid-cols-3">
+                        {/* Protection Status */}
+                        <Card className="border-primary/20 bg-white">
+                            <CardContent className="pt-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-muted-foreground">Protected Apps</p>
+                                        <div className="flex items-baseline gap-2">
+                                            <p className="text-3xl font-bold text-primary">{policies.data.filter((p) => p.status === 'active').length}</p>
+                                            <span className="text-lg text-muted-foreground">active</span>
+                                        </div>
+                                        <p className="mt-1 text-xs text-muted-foreground">
+                                            {policies.data.length} total apps • {policies.data.filter((p) => p.require_mfa).length} with MFA
+                                        </p>
                                     </div>
-                                    <p className="mt-1 text-xs text-muted-foreground">
-                                        {policies.data.length} total apps • {policies.data.filter((p) => p.require_mfa).length} with MFA
-                                    </p>
+                                    <Shield className="h-12 w-12 text-primary/60" />
                                 </div>
-                                <Shield className="h-12 w-12 text-primary/60" />
-                            </div>
-                        </CardContent>
-                    </Card>
+                            </CardContent>
+                        </Card>
 
-                    {/* Today's Activity */}
-                    <Card className="border-primary/20 bg-white">
-                        <CardContent className="pt-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-muted-foreground">Today's Access</p>
-                                    <div className="flex items-baseline gap-2">
-                                        <p className="text-3xl font-bold text-primary">{logStats.allowed}</p>
-                                        <span className="text-lg text-muted-foreground">allowed</span>
+                        {/* Today's Activity */}
+                        <Card className="border-primary/20 bg-white">
+                            <CardContent className="pt-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-muted-foreground">Today's Access</p>
+                                        <div className="flex items-baseline gap-2">
+                                            <p className="text-3xl font-bold text-primary">{logStats.allowed}</p>
+                                            <span className="text-lg text-muted-foreground">allowed</span>
+                                        </div>
+                                        <p className="mt-1 text-xs text-muted-foreground">
+                                            {logStats.blocked} blocked • {logStats.unique_users} unique users
+                                        </p>
                                     </div>
-                                    <p className="mt-1 text-xs text-muted-foreground">
-                                        {logStats.blocked} blocked • {logStats.unique_users} unique users
-                                    </p>
+                                    <CheckCircle className="h-12 w-12 text-primary/60" />
                                 </div>
-                                <CheckCircle className="h-12 w-12 text-primary/60" />
-                            </div>
-                        </CardContent>
-                    </Card>
+                            </CardContent>
+                        </Card>
 
-                    {/* Security Health */}
-                    <Card className="border-primary/20 bg-white">
-                        <CardContent className="pt-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-muted-foreground">Security Health</p>
-                                    <div className="mt-1 flex items-center gap-2">
-                                        <div className="h-3 w-3 rounded-full bg-green-500/50"></div>
-                                        <p className="text-xl font-bold text-foreground">All Good</p>
+                        {/* Security Health */}
+                        <Card className="border-primary/20 bg-white">
+                            <CardContent className="pt-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-muted-foreground">Security Health</p>
+                                        <div className="mt-1 flex items-center gap-2">
+                                            <div className="h-3 w-3 rounded-full bg-green-500/50"></div>
+                                            <p className="text-xl font-bold text-foreground">All Good</p>
+                                        </div>
+                                        <p className="mt-1 text-xs text-muted-foreground">No security issues detected</p>
                                     </div>
-                                    <p className="mt-1 text-xs text-muted-foreground">No security issues detected</p>
+                                    <Lock className="h-12 w-12 text-primary/60" />
                                 </div>
-                                <Lock className="h-12 w-12 text-primary/60" />
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
 
                 {/* Protected Sites List */}
                 <Card>
@@ -306,7 +314,19 @@ export default function OrganisationShow() {
                         </div>
 
                         {/* Sites List */}
-                        {filteredPolicies.length === 0 ? (
+                        {isLoading ? (
+                            <>
+                                {/* Desktop Loading Table */}
+                                <div className="hidden lg:block">
+                                    <TableSkeleton rows={3} />
+                                </div>
+                                
+                                {/* Mobile Loading Cards */}
+                                <div className="lg:hidden">
+                                    <MobileCardSkeleton cards={3} />
+                                </div>
+                            </>
+                        ) : filteredPolicies.length === 0 ? (
                             <div className="py-12 text-center">
                                 <Shield className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                                 <h3 className="mb-2 text-lg font-medium text-foreground">No protected apps yet</h3>
